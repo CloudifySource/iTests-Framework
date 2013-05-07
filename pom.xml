@@ -7,7 +7,7 @@
     <description>Service Grid Test framework for XAP and cloudify</description>
 
     <properties>
-        <xap.home>${env.CLOUDIFY_HOME}</xap.home>
+        <build.home>${env.HOME}</build.home>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gsVersion>9.6.0-SNAPSHOT</gsVersion>
         <cloudifyVersion>2.6.0-SNAPSHOT</cloudifyVersion>
@@ -36,6 +36,22 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.gigaspaces</groupId>
+            <artifactId>gs-runtime</artifactId>
+            <version>${gsVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gigaspaces</groupId>
+            <artifactId>gs-openspaces</artifactId>
+            <version>${gsVersion}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.gigaspaces.quality</groupId>
             <artifactId>DashboardReporter</artifactId>
             <version>0.0.2-SNAPSHOT</version>
@@ -55,7 +71,7 @@
             <artifactId>sigar</artifactId>
             <version>1.6.5</version>
             <scope>system</scope>
-            <systemPath>${xap.home}/lib/platform/sigar/sigar.jar</systemPath>
+            <systemPath>${build.home}/lib/platform/sigar/sigar.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.swift.common</groupId>
@@ -106,9 +122,9 @@
 
     <profiles>
         <profile>
-            <id>tgrid-sgtest-xap</id>
+            <id>tgrid</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <dependencies>
                 <dependency>
@@ -116,14 +132,14 @@
                     <artifactId>gs-openspaces</artifactId>
                     <version>${gsVersion}</version>
                     <scope>system</scope>
-                    <systemPath>${xap.home}/lib/required/gs-openspaces.jar</systemPath>
+                    <systemPath>${build.home}/lib/required/gs-openspaces.jar</systemPath>
                 </dependency>
                 <dependency>
                     <groupId>com.gigaspaces</groupId>
                     <artifactId>gs-runtime</artifactId>
                     <version>${gsVersion}</version>
                     <scope>system</scope>
-                    <systemPath>${xap.home}/lib/required/gs-runtime.jar</systemPath>
+                    <systemPath>${build.home}/lib/required/gs-runtime.jar</systemPath>
                 </dependency>
                 <dependency>
                     <groupId>xml-apis</groupId>
