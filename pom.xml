@@ -7,7 +7,7 @@
     <description>Service Grid Test framework for XAP and cloudify</description>
 
     <properties>
-        <xap.home>${env.XAP_HOME}</xap.home>
+        <xap.home>${env.CLOUDIFY_HOME}</xap.home>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gsVersion>9.6.0-SNAPSHOT</gsVersion>
         <cloudifyVersion>2.6.0-SNAPSHOT</cloudifyVersion>
@@ -49,6 +49,13 @@
             <groupId>org.jclouds.api</groupId>
             <artifactId>s3</artifactId>
             <version>1.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hyperic</groupId>
+            <artifactId>sigar</artifactId>
+            <version>1.6.5</version>
+            <scope>system</scope>
+            <systemPath>${xap.home}/lib/platform/sigar/sigar.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.swift.common</groupId>

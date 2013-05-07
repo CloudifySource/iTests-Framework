@@ -4,6 +4,7 @@ import com.j_spaces.kernel.PlatformVersion;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.hyperic.sigar.Sigar;
 import org.testng.Assert;
 
 import javax.xml.stream.*;
@@ -192,7 +193,7 @@ public class ScriptUtils {
     }
 
     public static String getBuildPath() {
-        String referencePath = getClassLocation(PlatformVersion.class);
+        String referencePath = getClassLocation(Sigar.class);
         String jarPath = referencePath.split("!")[0];
         int startOfPathLocation = jarPath.indexOf("/");
         if (isLinuxMachine()) {
@@ -201,9 +202,9 @@ public class ScriptUtils {
         else {
             jarPath = jarPath.substring(startOfPathLocation + 1);
         }
-        int startOfJarFilename = jarPath.indexOf("gs-runtime.jar");
+        int startOfJarFilename = jarPath.indexOf("sigar.jar");
         jarPath = jarPath.substring(0, startOfJarFilename);
-        jarPath += "../..";
+        jarPath += "../../..";
         return jarPath;
     }
 
