@@ -1,0 +1,14 @@
+
+src/main/resources/credentials/
+/bin/
+/target/
+/tools/
+/classes/
+/deploy/
+/output/
+/test-output/
+/.settings/
+.classpath
+.project
+.idea/**
+*.iml

@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Template0" verbose="1">
+    <listeners>
+        <listener class-name="iTests.framework.testng.report.SGTestNGListener" />
+        <listener class-name="iTests.framework.testng.report.SGTestNgSuiteSplitter" />
+        <!-- <listener class-name="org.uncommons.reportng.JUnitXMLReporter" /> -->
+        <listener class-name="iTests.framework.testng.report.TestNgReporterImpl" />
+    </listeners>
+    <packages>
+        <package name="">
+            <include name=""></include>
+            <exclude name=""></exclude>
+        </package>
+    </packages>
+</suite>
