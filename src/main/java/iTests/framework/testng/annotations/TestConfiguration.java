@@ -1,9 +1,9 @@
 package iTests.framework.testng.annotations;
 
-//import java.lang.annotation.Retention;
-//import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-//@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface TestConfiguration {
 
     public enum VM {
