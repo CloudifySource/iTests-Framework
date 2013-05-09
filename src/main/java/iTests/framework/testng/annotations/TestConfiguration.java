@@ -13,6 +13,6 @@ public @interface TestConfiguration {
         ALL
     }
 
-    VM[] os() default VM.ALL;
+    VM[] os() default iTests.framework.testng.annotations.TestConfiguration.VM.ALL;
 
 }
