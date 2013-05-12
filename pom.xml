@@ -118,6 +118,46 @@
             <artifactId>mail</artifactId>
             <version>1.4.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.gigaspaces.quality</groupId>
+            <artifactId>webuitf</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gigaspaces.quality</groupId>
+            <artifactId>wanem</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpmime</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-vfs2</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-jsch</artifactId>
+            <version>1.8.3</version>
+        </dependency>
     </dependencies>
 
     <profiles>
