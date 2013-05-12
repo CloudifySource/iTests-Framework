@@ -1,7 +1,6 @@
 package iTests.framework.testng.report.mail;
 
 import com.gigaspaces.dashboard.DashboardDBReporter;
-import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.testng.report.wiki.WikiUtils;
 import iTests.framework.testng.report.xml.SummaryReport;
 import iTests.framework.tools.SGTestHelper;
@@ -53,8 +52,8 @@ public class HtmlMailReporter {
 
         String type;
 
-        System.out.println("official version: " + PlatformVersion.getOfficialVersion());
-        if(PlatformVersion.getOfficialVersion().contains("XAP")){
+        System.out.println("project name: " + System.getProperty("iTests.projectName"));
+        if(!System.getProperty("iTests.projectName").contains("Cloudify")){
             sb.append("<h1>SGTest XAP Results </h1></br></br></br>").append("\n");
             type = "iTests-XAP";
         }
