@@ -52,8 +52,8 @@ public class HtmlMailReporter {
 
         String type;
 
-        System.out.println("project name: " + System.getProperty("iTests.projectName"));
-        if(!System.getProperty("iTests.projectName").contains("Cloudify")){
+        System.out.println("project name: " + extProperties.getProperty("suiteType"));
+        if(extProperties.getProperty("suiteType").contains("XAP")){
             sb.append("<h1>SGTest XAP Results </h1></br></br></br>").append("\n");
             type = "iTests-XAP";
         }
