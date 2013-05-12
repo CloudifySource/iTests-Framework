@@ -53,6 +53,7 @@ public class HtmlMailReporter {
 
         String type;
 
+        System.out.println("official version: " + PlatformVersion.getOfficialVersion());
         if(PlatformVersion.getOfficialVersion().contains("XAP")){
             sb.append("<h1>SGTest XAP Results </h1></br></br></br>").append("\n");
             type = "iTests-XAP";
