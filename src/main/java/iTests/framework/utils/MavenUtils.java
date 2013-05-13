@@ -1,6 +1,5 @@
 package iTests.framework.utils;
 
-import com.j_spaces.kernel.PlatformVersion;
 import org.openspaces.admin.machine.Machine;
 
 import java.io.File;
@@ -129,7 +128,7 @@ public class MavenUtils {
 //	        ScriptUtils.getBuildPath() + "/lib/platform/mule/");
 		String mulePath = getBuildPath() + "/lib/platform/mule";
 
-        if(PlatformVersion.getOfficialVersion().contains("XAP")){
+        if(System.getProperty("suiteType").contains("XAP")){
             SSHUtils.runCommand(machine.getHostAddress(), 600000, "mkdir " + mulePath + ";cp -r /export/tgrid/mule-jars/* " +
                     mulePath, MavenUtils.username, MavenUtils.password);
         }

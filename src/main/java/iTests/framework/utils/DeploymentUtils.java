@@ -1,6 +1,5 @@
 package iTests.framework.utils;
 
-import com.j_spaces.kernel.PlatformVersion;
 import org.junit.Assert;
 
 import java.io.*;
@@ -88,7 +87,7 @@ public class DeploymentUtils {
 
         String path;
 
-        if(PlatformVersion.getOfficialVersion().contains("XAP")){
+        if(System.getProperty("suiteType").contains("XAP")){
             path = "./apps/";
         }
         else{
@@ -102,7 +101,7 @@ public class DeploymentUtils {
 
 	public static File getProcessingUnit(String app, String pu) {
 
-        if(PlatformVersion.getOfficialVersion().contains("XAP")){
+        if(System.getProperty("suiteType").contains("XAP")){
             String s = System.getProperty("file.separator");
             String pathToJar = app + s + pu + s + getSGTestVersion() + s;
             if(app.equals(pu)) {
@@ -163,7 +162,7 @@ public class DeploymentUtils {
 
 	public static String getAppsPath(String s) {
 
-        if(PlatformVersion.getOfficialVersion().contains("XAP")){
+        if(System.getProperty("suiteType").contains("XAP")){
             return getLocalRepository() + "repository" + s + "com" + s + "gigaspaces" + s + "quality" + s + "sgtest" + s + "apps" + s;
         }
         else{

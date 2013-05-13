@@ -1,6 +1,5 @@
 package iTests.framework.utils;
 
-import com.j_spaces.kernel.PlatformVersion;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.gsa.GridServiceAgent;
@@ -152,7 +151,7 @@ public class SetupUtils {
 			}
 		}
 
-        if(PlatformVersion.getOfficialVersion().contains("XAP")){
+        if(System.getProperty("suiteType").contains("XAP")){
             if (gsaStartupPIDs != null) {
                 setupCleanEnvironment(admin);
             }

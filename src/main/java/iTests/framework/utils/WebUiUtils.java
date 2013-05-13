@@ -1,6 +1,5 @@
 package iTests.framework.utils;
 
-import com.j_spaces.kernel.PlatformVersion;
 import com.thoughtworks.selenium.Selenium;
 import iTests.framework.tools.SGTestHelper;
 import org.openqa.selenium.*;
@@ -129,7 +128,7 @@ public class WebUiUtils {
 
         String xmlPath;
 
-        if(PlatformVersion.getOfficialVersion().contains("XAP")){
+        if(System.getProperty("suiteType").contains("XAP")){
             xmlPath = SGTestHelper.getSGTestSrcDir() + "/main/resources/webui/test-param.xml";
         }
         else{
