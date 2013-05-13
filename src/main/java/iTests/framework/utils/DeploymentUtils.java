@@ -19,41 +19,7 @@ public class DeploymentUtils {
 	 */
 	@Deprecated
     public static File prepareApp(String appName) {
-        File appsFolder = new File("src/main/resources/apps/" + appName);
-        File metaCommonLib = new File("src/main/resources/apps/meta-common/lib");
-        File metaCommonTarget = new File(metaCommonLib.getParentFile() + "/target");
-        File commonLib = new File(appsFolder.getAbsolutePath() + "/common/lib");
-        File commonTarget = new File(commonLib.getParentFile() + "/target");
-
-        File target = null;
-        File lib;
-
-        for (File f : appsFolder.listFiles()) {
-            if (f.isDirectory() && !f.getName().contains("common") && !f.getName().contains(".svn")) {
-                target = new File(f.getAbsolutePath() + "/target/" + f.getName());
-                target.mkdir();
-                lib = new File(target.getAbsolutePath() + "/lib");
-                lib.mkdir();
-                File puLib = new File(f.getAbsolutePath() + "/lib");
-                File metainfSpringDir = new File(f.getAbsolutePath() + "/src/META-INF/spring");
-
-                try {
-                    if (metaCommonLib.exists())
-                        copyLibs(metaCommonLib, lib);
-                    if (commonLib.exists())
-                        copyLibs(commonLib, lib);
-                    if (puLib.exists())
-                        copyLibs(puLib, lib);
-                    copyClasses(new File(metaCommonTarget.getAbsolutePath() + "/classes"), target);
-                    copyClasses(new File(commonTarget.getAbsolutePath() + "/classes"), target);
-                    copyClasses(new File(f.getAbsolutePath() + "/target/classes"), target);
-                    copyDirectory(metainfSpringDir, target);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        return target;
+        return null;
     }
 	
 	/**
