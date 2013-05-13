@@ -73,9 +73,11 @@ public class DeploymentUtils {
             if(app.equals(pu)) {
                 pathToJar = pu + s + getSGTestVersion() + s;
             }
+            LogUtils.log("path to jar: " + pathToJar);
             return new File(getAppsPath(s) + pathToJar + pu + "-" + getSGTestVersion() + ".jar" );
         }
         else{
+            LogUtils.log("returning pu path: src/main/resources/apps/" + app + "/" + pu + "/target/" + pu);
             return new File("src/main/resources/apps/" + app + "/" + pu + "/target/" + pu);
         }
 	}
