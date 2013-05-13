@@ -111,7 +111,7 @@ public class CliUtils {
     private static void invokeMain(String ... args) {
         String[] commandArguments = new String[1 + args.length];
 
-        if(System.getProperty("suiteType").contains("XAP")){
+        if(System.getProperty("iTests.suiteType").contains("XAP")){
             REQUIERED_ARGUMENT = "config/services/services.config";
         }
         else{

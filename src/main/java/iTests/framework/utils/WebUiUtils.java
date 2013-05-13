@@ -128,7 +128,7 @@ public class WebUiUtils {
 
         String xmlPath;
 
-        if(System.getProperty("suiteType").contains("XAP")){
+        if(System.getProperty("iTests.suiteType").contains("XAP")){
             xmlPath = SGTestHelper.getSGTestSrcDir() + "/main/resources/webui/test-param.xml";
         }
         else{
