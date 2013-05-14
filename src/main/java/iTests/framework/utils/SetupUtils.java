@@ -151,7 +151,7 @@ public class SetupUtils {
 			}
 		}
 
-        if(System.getProperty("iTests.suiteType").contains("XAP")){
+        if(System.getProperty("iTests.suiteType", "dev_mode").contains("XAP")){
             if (gsaStartupPIDs != null) {
                 setupCleanEnvironment(admin);
             }

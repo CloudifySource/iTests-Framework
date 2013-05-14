@@ -82,14 +82,22 @@ public class WebuiTestUtils{
 	
 	public WebuiTestUtils() throws Exception {
 		startup();
-	}	
-	
+	}
+
+	public WebuiTestUtils(String url) throws Exception {
+		startup(url);
+	}
+
 	private void startup() throws Exception{
+		startup(null);
+	}
+
+	private void startup(String url) throws Exception{
 		beforeSuite();
 		beforeTest();
-		startWebServices();
+		startWebServices(url);
 	}
-	
+
 	public void close() throws Exception{
 		killWebServices();
 	}
@@ -185,13 +193,26 @@ public class WebuiTestUtils{
 	 * @throws Exception 
 	 */
 	public void startWebServices() throws Exception { 
+		startWebServices(null);
+
+	}
+
+	/**
+	 * starts the web-ui browser from the batch file in gigaspaces
+	 * also opens a browser and connect to the server
+	 * @throws Exception
+	 */
+	public void startWebServices(String url) throws Exception {
 		if (isStartWebServerFromBatch()) {
 			startWebServer();
 
-            String isReverseProxy = System.getProperty("reverse.proxy");
-            String url = baseUrl;
-            if(isReverseProxy != null && isReverseProxy.equals("true")){
-               url = baseReverseProxyUrl;
+            if(url == null){
+
+                String isReverseProxy = System.getProperty("reverse.proxy");
+                url = baseUrl;
+                if(isReverseProxy != null && isReverseProxy.equals("true")){
+                    url = baseReverseProxyUrl;
+                }
             }
 
             LogUtils.log("starting web browser with url " + url);

@@ -128,7 +128,7 @@ public class MavenUtils {
 //	        ScriptUtils.getBuildPath() + "/lib/platform/mule/");
 		String mulePath = getBuildPath() + "/lib/platform/mule";
 
-        if(System.getProperty("iTests.suiteType").contains("XAP")){
+        if(System.getProperty("iTests.suiteType", "dev_mode").contains("XAP")){
             SSHUtils.runCommand(machine.getHostAddress(), 600000, "mkdir " + mulePath + ";cp -r /export/tgrid/mule-jars/* " +
                     mulePath, MavenUtils.username, MavenUtils.password);
         }
