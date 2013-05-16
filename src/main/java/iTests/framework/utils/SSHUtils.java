@@ -348,7 +348,12 @@ public class SSHUtils {
                 final SSHExec task = new SSHExec();
                 task.setOutput(output);
                 // ssh related parameters
-                task.setFailonerror(true); // throw exception if exit code is not 0
+                if(System.getProperty("iTests.suiteType", "dev_mode").contains("XAP")){
+                    task.setFailonerror(false);
+                }
+                else{
+                    task.setFailonerror(true); // throw exception if exit code is not 0
+                }
                 task.setCommand(command);
                 task.setHost(ipAddress);
                 task.setTrust(true);
