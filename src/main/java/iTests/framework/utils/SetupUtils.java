@@ -1,5 +1,6 @@
 package iTests.framework.utils;
 
+import iTests.framework.tools.SGTestHelper;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.gsa.GridServiceAgent;
@@ -151,7 +152,7 @@ public class SetupUtils {
 			}
 		}
 
-        if(System.getProperty("iTests.suiteType", "dev_mode").contains("XAP")){
+        if(SGTestHelper.isXap()){
             if (gsaStartupPIDs != null) {
                 setupCleanEnvironment(admin);
             }

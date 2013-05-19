@@ -1,5 +1,6 @@
 package iTests.framework.tools;
 
+import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
 import org.apache.commons.lang.StringUtils;
@@ -61,7 +62,21 @@ public class SGTestHelper {
 	public static String getSuiteId() {
 		return System.getProperty("iTests.suiteId", "");
 	}
-	
+
+	public static String getSuiteType() {
+		return System.getProperty("iTests.suiteType", "");
+	}
+
+    public static boolean isXap(){
+
+        if(isDevMode()){
+            return PlatformVersion.getOfficialVersion().contains("XAP");
+        }
+        else{
+            return getSuiteType().contains("XAP");
+        }
+    }
+
 	//each suite has it's own work dir.
 	public static String getWorkDirName() {
 		String suiteDir = getSuiteName();
@@ -91,5 +106,8 @@ public class SGTestHelper {
     public static String getBranchName() {
         return System.getProperty("branch.name", "");
     }
-	
+
+    public static void main(String[] args) {
+        isXap();
+    }
 }

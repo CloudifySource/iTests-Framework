@@ -2,6 +2,7 @@ package iTests.framework.utils;
 
 import com.gigaspaces.internal.utils.StringUtils;
 import com.jcraft.jsch.*;
+import iTests.framework.tools.SGTestHelper;
 import org.apache.tools.ant.taskdefs.optional.ssh.SSHExec;
 import org.openspaces.admin.Admin;
 import org.openspaces.grid.gsm.machines.plugins.exceptions.ElasticMachineProvisioningException;
@@ -348,7 +349,7 @@ public class SSHUtils {
                 final SSHExec task = new SSHExec();
                 task.setOutput(output);
                 // ssh related parameters
-                if(System.getProperty("iTests.suiteType", "dev_mode").contains("XAP")){
+                if(SGTestHelper.isXap()){
                     task.setFailonerror(false);
                 }
                 else{

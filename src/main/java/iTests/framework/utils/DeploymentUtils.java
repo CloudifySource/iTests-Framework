@@ -1,5 +1,6 @@
 package iTests.framework.utils;
 
+import iTests.framework.tools.SGTestHelper;
 import org.junit.Assert;
 
 import java.io.*;
@@ -52,7 +53,7 @@ public class DeploymentUtils {
 
         String path;
 
-        if (System.getProperty("iTests.suiteType", "dev_mode").contains("XAP")) {
+        if (SGTestHelper.isXap()) {
             path = "./apps/";
         } else {
             path = "src/main/resources/apps/";
@@ -65,7 +66,7 @@ public class DeploymentUtils {
 
     public static File getProcessingUnit(String app, String pu) {
 
-        if (System.getProperty("iTests.suiteType", "dev_mode").contains("XAP")) {
+        if (SGTestHelper.isXap()) {
             String s = System.getProperty("file.separator");
             String pathToJar = app + s + pu + s + getSGTestVersion() + s;
             if (app.equals(pu)) {

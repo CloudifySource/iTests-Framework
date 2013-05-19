@@ -7,6 +7,7 @@ import com.j_spaces.core.Constants;
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.admin.IRemoteJSpaceAdmin;
 import com.j_spaces.core.admin.SpaceRuntimeInfo;
+import iTests.framework.tools.SGTestHelper;
 import net.jini.core.entry.UnusableEntryException;
 import net.jini.core.transaction.TransactionException;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -111,7 +112,7 @@ public class CliUtils {
     private static void invokeMain(String ... args) {
         String[] commandArguments = new String[1 + args.length];
 
-        if(System.getProperty("iTests.suiteType", "dev_mode").contains("XAP")){
+        if(SGTestHelper.isXap()){
             REQUIERED_ARGUMENT = "config/services/services.config";
         }
         else{
