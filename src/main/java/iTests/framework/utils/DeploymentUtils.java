@@ -171,7 +171,11 @@ public class DeploymentUtils {
 
     public static String getLocalRepository() {
         String s = System.getProperty("file.separator");
-        return System.getProperty("user.home") + s + ".m2" + s;
+        if(System.getenv("M2_HOME") != null){
+            return System.getenv("M2_HOME") + s;
+        }else{
+            return System.getProperty("user.home") + s + ".m2" + s;
+        }
     }
 
     public static String getProcessingUnitName(String pu) {
