@@ -18,14 +18,6 @@ public class TestNgReporterImpl implements IReporter {
     private static final Comparator<IClass> CLASS_COMPARATOR = new TestClassComparator();
     private static final Comparator<ITestResult> RESULT_COMPARATOR = new TestResultComparator();
 
-    private enum TestStatus {
-        FAILED_CONFIG,
-        SKIPPED_CONFIG,
-        FAILED_TEST,
-        SKIPPED_TEST,
-        PASSED_TEST,
-    }
-
     @Override
     public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outputDirectory) {
         try {
