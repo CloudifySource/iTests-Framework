@@ -76,7 +76,7 @@ public class LogFetcher {
         int index = path.indexOf("build_");
         String ans;
         if(index == -1){
-            String[] split = path.split("cloudify-itests-service");
+            String[] split = path.split("itests-service");
             ans = getUrl() + System.getProperty("iTests.buildNumber") + split[1];
         }
         else{
