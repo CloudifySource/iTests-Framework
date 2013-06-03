@@ -1,6 +1,7 @@
 package iTests.framework.utils;
 
 import iTests.framework.tools.SGTestHelper;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -17,6 +18,13 @@ public class ZipUtils {
     public static void unzipArchive(String testName, String suiteName) {
         File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/../");
         File testFolder = null;
+        File outpudDir = new File(SGTestHelper.getBuildDir() + "/../temp-zip-dir-" + System.currentTimeMillis() + "/");
+        LogUtils.log("creating dir " + outpudDir);
+        boolean mkdirResult = outpudDir.mkdir();
+        if(!mkdirResult){
+            LogUtils.log("creation failed.");
+        }
+
         testFolder = new File(buildFolder +"/" + suiteName + "/" +testName);
         File[] children = testFolder.listFiles();
         if (children == null)
@@ -24,8 +32,18 @@ public class ZipUtils {
         for (int n = 0; n < children.length; n++) {
             File file = children[n];
             if (file.getName().contains(".zip")) {
-            	LogUtils.log("unzipping file [ " + file.getName() + " ]");
-                unzipArchive(file, testFolder.getAbsoluteFile());
+            	LogUtils.log("unzipping file [ " + file.getName() + " ] to " + outpudDir.getAbsolutePath());
+                unzipArchive(file, outpudDir.getAbsoluteFile());
+
+                File[] filesInOutpuDir = outpudDir.listFiles();
+                for(File f : filesInOutpuDir){
+                    try {
+                        LogUtils.log("copying " + f.getAbsolutePath() + " to " + testFolder.getAbsolutePath());
+                        FileUtils.copyFileToDirectory(f, testFolder);
+                    } catch (IOException e) {
+                        LogUtils.log(e.getMessage());
+                    }
+                }
                 file.delete();
             }
         }
