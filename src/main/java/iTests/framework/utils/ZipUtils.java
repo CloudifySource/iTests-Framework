@@ -31,25 +31,6 @@ public class ZipUtils {
         }
     }
 
-    public static void unzipArchiveToUser(String testName, String suiteName) {
-        File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/../");
-        File testFolder = new File(buildFolder + "/" + suiteName + "/" +testName);
-        File outputDir = new File(SGTestHelper.getBuildDir() + "/../" + suiteName + "/" +testName);
-
-        File[] children = testFolder.listFiles();
-        if (children == null)
-            return;
-        for (int n = 0; n < children.length; n++) {
-            File file = children[n];
-            if (file.getName().contains(".zip")) {
-            	LogUtils.log("unzipping file [ " + file.getName() + " ] to " + outputDir.getAbsolutePath());
-                unzipArchive(file, outputDir.getAbsoluteFile());
-
-                file.delete();
-            }
-        }
-    }
-
     public static void unzipArchive(File archive, File outputDir) {
         try {
             ZipFile zipfile = new ZipFile(archive);
