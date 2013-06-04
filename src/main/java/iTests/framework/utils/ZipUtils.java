@@ -1,7 +1,6 @@
 package iTests.framework.utils;
 
 import iTests.framework.tools.SGTestHelper;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -14,18 +13,29 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtils {
-	
+
     public static void unzipArchive(String testName, String suiteName) {
         File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/../");
         File testFolder = null;
-        File outputDir = new File(SGTestHelper.getBuildDir() + "/../temp-zip-dir-" + System.currentTimeMillis() + "/");
-        LogUtils.log("creating dir " + outputDir);
-        boolean mkdirResult = outputDir.mkdir();
-        if(!mkdirResult){
-            LogUtils.log("creation failed.");
-        }
-
         testFolder = new File(buildFolder +"/" + suiteName + "/" +testName);
+        File[] children = testFolder.listFiles();
+        if (children == null)
+            return;
+        for (int n = 0; n < children.length; n++) {
+            File file = children[n];
+            if (file.getName().contains(".zip")) {
+                LogUtils.log("unzipping file [ " + file.getName() + " ]");
+                unzipArchive(file, testFolder.getAbsoluteFile());
+                file.delete();
+            }
+        }
+    }
+
+    public static void unzipArchiveToUser(String testName, String suiteName) {
+        File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/../");
+        File testFolder = new File(buildFolder + "/" + suiteName + "/" +testName);
+        File outputDir = new File(SGTestHelper.getBuildDir() + "/../" + suiteName + "/" +testName);
+
         File[] children = testFolder.listFiles();
         if (children == null)
             return;
@@ -35,21 +45,6 @@ public class ZipUtils {
             	LogUtils.log("unzipping file [ " + file.getName() + " ] to " + outputDir.getAbsolutePath());
                 unzipArchive(file, outputDir.getAbsoluteFile());
 
-                File[] filesInOutpuDir = outputDir.listFiles();
-                for(File f : filesInOutpuDir){
-                    try {
-                        LogUtils.log("copying " + f.getAbsolutePath() + " to " + testFolder.getAbsolutePath());
-                        if(f.isDirectory()){
-                            FileUtils.copyDirectoryToDirectory(f, testFolder);
-                        }
-                        else{
-                            FileUtils.copyFileToDirectory(f, testFolder);
-                        }
-
-                    } catch (IOException e) {
-                        LogUtils.log(e.getMessage());
-                    }
-                }
                 file.delete();
             }
         }

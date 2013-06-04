@@ -34,7 +34,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         	suiteName = System.getProperty("iTests.suiteName");
         }
         LogUtils.log("Configuration Succeeded: " + configurationName);
-        ZipUtils.unzipArchive(testMethodName, suiteName);
+        ZipUtils.unzipArchiveToUser(testMethodName, suiteName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
     }
 
