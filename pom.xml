@@ -7,10 +7,10 @@
     <description>Service Grid Test framework for XAP and cloudify</description>
 
     <properties>
-        <build.home>${env.HOME}</build.home>
+        <build.home>/home/kobi/opt/xap/9.6.0/gigaspaces-xap-premium-9.6.0-m4</build.home>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gsVersion>9.6.0-SNAPSHOT</gsVersion>
-        <cloudifyVersion>2.6.0-SNAPSHOT</cloudifyVersion>
+        <gsVersion>9.6.0-SNAPSHOT-20130604.b9483-585</gsVersion>
+        <cloudifyVersion>2.6.0-SNAPSHOT-20130604.b4983-155</cloudifyVersion>
         <springVersion>3.1.1.RELEASE</springVersion>
         <hibernateVersion>3.6.10.Final</hibernateVersion>
     </properties>
@@ -232,7 +232,7 @@
             <plugin>
                 <groupId>org.cloudifysource</groupId>
                 <artifactId>s3client-maven-plugin</artifactId>
-                <version>1.2</version>
+                <version>1.3</version>
                 <configuration>
                     <user>${user}</user>
                     <key>${key}</key>
