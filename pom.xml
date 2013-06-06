@@ -232,7 +232,7 @@
             <plugin>
                 <groupId>org.cloudifysource</groupId>
                 <artifactId>s3client-maven-plugin</artifactId>
-                <version>1.2</version>
+                <version>1.3</version>
                 <configuration>
                     <user>${user}</user>
                     <key>${key}</key>
