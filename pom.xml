@@ -16,7 +16,7 @@
     </properties>
 
     <groupId>iTests.framework</groupId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
@@ -121,12 +121,12 @@
         <dependency>
             <groupId>com.gigaspaces.quality</groupId>
             <artifactId>webuitf</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.gigaspaces.quality</groupId>
             <artifactId>wanem</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.3-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
