@@ -122,12 +122,20 @@ public class DeploymentUtils {
     }
 
     public static String getAppsPath(String s) {
-        return getLocalRepository() + "repository" + s + "com" + s + "gigaspaces" + s + "quality" + s + "sgtest" + s + "apps" + s;
+        String localRepoProp = System.getProperty("maven.repo.local");
+        if(localRepoProp != null)
+            return getLocalRepository() + "com" + s + "gigaspaces" + s + "quality" + s + "sgtest" + s + "apps" + s;
+        else
+            return getLocalRepository() + "repository" + s + "com" + s + "gigaspaces" + s + "quality" + s + "sgtest" + s + "apps" + s;
 
     }
 
     public static String getQualityItestsPath(String s) {
-        return getLocalRepository() + "repository" + s + "org" + s + "cloudifysource" + s + "quality" + s + "iTests" + s;
+        String localRepoProp = System.getProperty("maven.repo.local");
+        if(localRepoProp != null)
+            return getLocalRepository() + "org" + s + "cloudifysource" + s + "quality" + s + "iTests" + s;
+        else
+            return getLocalRepository() + "repository" + s + "org" + s + "cloudifysource" + s + "quality" + s + "iTests" + s;
     }
 
     private static void copyLibs(File source, File target) throws IOException {
