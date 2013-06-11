@@ -171,7 +171,11 @@ public class DeploymentUtils {
 
     public static String getLocalRepository() {
         String s = System.getProperty("file.separator");
-         return System.getProperty("user.home") + s + ".m2" + s;
+        String localRepoProp = System.getProperty("maven.repo.local");
+        System.out.println("maven.repo.local="+localRepoProp);
+        if(localRepoProp != null)
+            return localRepoProp;
+        return System.getProperty("user.home") + s + ".m2" + s;
     }
 
     public static String getProcessingUnitName(String pu) {
