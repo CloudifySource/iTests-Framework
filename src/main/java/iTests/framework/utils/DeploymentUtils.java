@@ -174,7 +174,7 @@ public class DeploymentUtils {
         String localRepoProp = System.getProperty("maven.repo.local");
         System.out.println("maven.repo.local="+localRepoProp);
         if(localRepoProp != null)
-            return localRepoProp;
+            return localRepoProp  + s;
         return System.getProperty("user.home") + s + ".m2" + s;
     }
 
