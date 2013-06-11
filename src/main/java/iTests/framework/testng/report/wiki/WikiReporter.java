@@ -86,12 +86,7 @@ public class WikiReporter {
         String buildVersion = args[2];
         String majorVersion = args[3];
         String minorVersion = args[4];
-
-        String isCloudMode = System.getProperty("iTests.cloud.enabled");
-        if(isCloudMode != null && !Boolean.valueOf(isCloudMode)) {
-            String buildLogUrl = args[5];
-            extProperties.put("buildLogUrl", buildLogUrl);
-        }
+        String buildLogUrl = args[5];
 
         extProperties.put("fileName", fileName);
         extProperties.put("inputDirectory", inputDirectory);
@@ -99,6 +94,7 @@ public class WikiReporter {
         extProperties.put("buildVersion", buildVersion);
         extProperties.put("majorVersion", majorVersion);
         extProperties.put("minorVersion", minorVersion);
+        extProperties.put("buildLogUrl", buildLogUrl);
 
         TestsReportFileStream fileStream = new TestsReportFileStream();
         TestsReport testsReport = fileStream.readFromFile(inputDirectory, fileName);
