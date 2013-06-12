@@ -7,8 +7,11 @@ public class TestNGUtils {
 	public static String constructTestMethodName(ITestResult iTestResult) {
 		String parameters = extractParameters(iTestResult);
         if(ScriptUtils.isWindows()){
-            LogUtils.log("is windows");
-            return iTestResult.getTestClass().getClass().getSimpleName() + "." + iTestResult.getMethod().getMethodName() + "(" + parameters + ")";
+            LogUtils.log("class-simple: " + iTestResult.getTestClass().getClass().getSimpleName());
+            LogUtils.log("class: " + iTestResult.getTestClass().getClass().getName());
+            LogUtils.log("class-real: " + iTestResult.getTestClass().getRealClass().getSimpleName());
+
+            return iTestResult.getTestClass().getRealClass().getSimpleName() + "." + iTestResult.getMethod().getMethodName() + "(" + parameters + ")";
         }
         else{
             return iTestResult.getTestClass().getName() + "." + iTestResult.getMethod().getMethodName() + "(" + parameters + ")";
