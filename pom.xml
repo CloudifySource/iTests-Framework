@@ -55,6 +55,12 @@
             <groupId>com.gigaspaces.quality</groupId>
             <artifactId>DashboardReporter</artifactId>
             <version>0.0.3-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -92,6 +98,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>${hibernateVersion}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
