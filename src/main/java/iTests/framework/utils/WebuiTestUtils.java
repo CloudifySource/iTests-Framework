@@ -331,7 +331,7 @@ public class WebuiTestUtils{
 
 	private void waitForServerConnection(WebDriver driver) throws InterruptedException {
 		int seconds = 0;
-		while (seconds < 30) {
+		while (seconds < 40) {
 			try {
 				driver.findElement(By.xpath(WebConstants.Xpath.loginButton));
 				LogUtils.log("Web server connection established");
