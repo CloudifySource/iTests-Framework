@@ -28,6 +28,36 @@ public class AssertUtils {
 		boolean getCondition();
 	}
 
+    public static abstract class AssertConditionProvider implements RepetitiveConditionProvider{
+
+        String label = getClass().getSimpleName();
+
+        public AssertConditionProvider(){
+
+        }
+
+        public AssertConditionProvider( String label ){
+            this.label = label;
+        }
+        // can throw exceptions
+        abstract public boolean condition() throws Exception;
+
+        public boolean getCondition(){
+            try{
+                return condition();
+            }catch(Exception e){
+                LogUtils.log("repetitive condition [" + toString() + "] threw exception. Returning false", e);
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
+
 	static public void repetitiveAssertTrue(final String message,
 			final RepetitiveConditionProvider condition,
 			final long timeoutMilliseconds) {
@@ -272,7 +302,6 @@ public class AssertUtils {
 		}
 	}
 
-    private AssertUtils() {}
 
 	public static void repetitive(final IRepetitiveRunnable repeatedAssert,
 			final int timeout) {
