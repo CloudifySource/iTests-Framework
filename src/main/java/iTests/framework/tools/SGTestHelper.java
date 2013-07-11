@@ -6,6 +6,9 @@ import iTests.framework.utils.ScriptUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class SGTestHelper {
 
@@ -105,6 +108,18 @@ public class SGTestHelper {
 
     public static String getBranchName() {
         return System.getProperty("branch.name", "");
+    }
+
+    public static Properties getPropertiesFromFile(String propertiesFileName) {
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(propertiesFileName));
+        } catch (IOException e) {
+            throw new RuntimeException("failed to read " + propertiesFileName + " file - " + e, e);
+        }
+
+
+        return properties;
     }
 
     public static void main(String[] args) {
