@@ -129,7 +129,7 @@ public class IOUtils {
         if (existingProps != null) {
             FileUtils.writeStringToFile(destinationFile, existingProps + "\n" + readFileToString.replaceAll("#", "//").replaceAll("\\\\:", ":"));
         } else {
-            FileUtils.writeStringToFile(destinationFile, readFileToString.replaceAll("#", "//"));
+            FileUtils.writeStringToFile(destinationFile, readFileToString.replaceAll("#", "//").replaceAll("\\\\:", ":"));
         }
         return destinationFile;
 
