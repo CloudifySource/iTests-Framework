@@ -20,10 +20,10 @@ public class FormattingUtils {
     private final static long G = M*K;
 
     //constants for value calculations for big memory numbers
-    private final static long KB = 1024;
-    private final static long MB = KB*KB;
-    private final static long GB = MB*KB;
-    private final static long TB = GB*KB;
+    public final static long KB = 1024;
+    public final static long MB = KB*KB;
+    public final static long GB = MB*KB;
+    public final static long TB = GB*KB;
     
     private final static String BYTES_NAME = "B";
     private final static String KB_NAME = "KB";
