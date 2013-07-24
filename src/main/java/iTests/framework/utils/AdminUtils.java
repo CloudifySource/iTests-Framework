@@ -3,12 +3,17 @@ package iTests.framework.utils;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
 import com.gigaspaces.grid.gsa.GSProcessOptions;
+import com.gigaspaces.internal.server.space.SpaceImpl;
 import com.gigaspaces.log.LogEntryMatchers;
+import com.gigaspaces.security.directory.CredentialsProvider;
 import com.gigaspaces.security.directory.UserDetails;
+import com.j_spaces.core.client.SpaceURL;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import com.j_spaces.core.filters.ReplicationStatistics.OutgoingChannel;
 import com.j_spaces.core.filters.ReplicationStatistics.OutgoingReplication;
 import com.j_spaces.core.filters.ReplicationStatistics.ReplicationMode;
+import com.j_spaces.kernel.JSpaceUtilities;
+
 import net.jini.core.discovery.LookupLocator;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
@@ -18,6 +23,7 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.internal.InternalAdminFactory;
 import org.openspaces.admin.internal.admin.InternalAdmin;
+import org.openspaces.admin.internal.space.InternalSpaceInstance;
 import org.openspaces.admin.lus.LookupService;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -151,6 +157,13 @@ public class AdminUtils {
         _admin.setDefaultTimeout(ADMIN_DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS); //default - 15 minutes
         return _admin;
     }
+    
+    public static Admin createSecuredAdmin(CredentialsProvider credentialsProvider) {
+        AdminFactory factory = new AdminFactory().credentialsProvider( credentialsProvider ).discoverUnmanagedSpaces();
+        Admin _admin = createAdmin(factory);
+        _admin.setDefaultTimeout(ADMIN_DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS); //default - 15 minutes
+        return _admin;
+    }    
 
     public static LookupService loadLUS(GridServiceAgent gsa) {
     	return loadLUS(gsa, null);
@@ -751,4 +764,21 @@ public class AdminUtils {
             return totalSuccessfulOperationsPerSecond;
         }
     }
+    
+	public static String createSpaceInstanceName( SpaceInstance spaceInstance ){
+		
+		String className = SpaceImpl.class.getName();
+		StringBuilder strBuilder = new StringBuilder( className );
+		strBuilder.append( "(" );
+		
+		SpaceURL spaceUrl = spaceInstance.getSpaceUrl();
+		String spaceContainerName = spaceUrl.getContainerName();
+		String spaceName = ( ( InternalSpaceInstance )spaceInstance ).getSpaceName();
+		String fullSpaceName = JSpaceUtilities.createFullSpaceName( spaceContainerName, spaceName );
+		
+		strBuilder.append( fullSpaceName );
+		strBuilder.append( ")" );
+
+		return strBuilder.toString();        
+	}    
 }
