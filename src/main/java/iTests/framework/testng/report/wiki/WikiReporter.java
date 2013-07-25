@@ -86,7 +86,10 @@ public class WikiReporter {
         String buildVersion = args[2];
         String majorVersion = args[3];
         String minorVersion = args[4];
-        String buildLogUrl = args[5];
+        String buildLogUrl = "";
+        if(args.length > 5){
+            buildLogUrl = args[5];
+        }
 
         extProperties.put("fileName", fileName);
         extProperties.put("inputDirectory", inputDirectory);
