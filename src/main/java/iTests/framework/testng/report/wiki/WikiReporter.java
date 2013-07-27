@@ -89,6 +89,7 @@ public class WikiReporter {
         String buildLogUrl = "";
         if(args.length > 5){
             buildLogUrl = args[5];
+            extProperties.put("buildLogUrl", buildLogUrl);
         }
 
         extProperties.put("fileName", fileName);
@@ -97,7 +98,7 @@ public class WikiReporter {
         extProperties.put("buildVersion", buildVersion);
         extProperties.put("majorVersion", majorVersion);
         extProperties.put("minorVersion", minorVersion);
-        extProperties.put("buildLogUrl", buildLogUrl);
+
 
         TestsReportFileStream fileStream = new TestsReportFileStream();
         TestsReport testsReport = fileStream.readFromFile(inputDirectory, fileName);
