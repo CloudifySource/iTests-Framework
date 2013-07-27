@@ -65,6 +65,7 @@ public class HtmlMailReporter {
         sb.append("<h2>Suite Name:  " + summaryReport.getSuiteName() + " </h2></br>").append("\n");
         sb.append("<h4>Duration:  " + WikiUtils.formatDuration(summaryReport.getDuration()) + " </h4></br>").append("\n");
         sb.append("<h4>Full Suite Report:  " + link + " </h4></br>").append("\n");
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22 buildLogUrl " + buildLogUrl);
         if(buildLogUrl != null &&  !buildLogUrl.equals(""))
             sb.append("<h4>Full build log:  <a href=" + getFullBuildLog(buildLogUrl) + ">" + getFullBuildLog(buildLogUrl) + "</a> </h4></br>").append("\n");
         sb.append("<h4 style=\"color:blue\">Total run:  " + summaryReport.getTotalTestsRun() + " </h4></br>").append("\n");
