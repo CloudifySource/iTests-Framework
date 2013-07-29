@@ -65,17 +65,12 @@ public class DeploymentUtils {
     }
 
     public static File getProcessingUnit(String app, String pu) {
-
-        if (SGTestHelper.isXap()) {
-            String s = System.getProperty("file.separator");
-            String pathToJar = app + s + pu + s + getSGTestVersion() + s;
-            if (app.equals(pu)) {
-                pathToJar = pu + s + getSGTestVersion() + s;
-            }
-            return new File(getAppsPath(s) + pathToJar + pu + "-" + getSGTestVersion() + ".jar");
-        } else {
-            return new File("src/main/resources/apps/" + app + "/" + pu + "/target/" + pu);
+        String s = System.getProperty("file.separator");
+        String pathToJar = app + s + pu + s + getSGTestVersion() + s;
+        if (app.equals(pu)) {
+            pathToJar = pu + s + getSGTestVersion() + s;
         }
+        return new File(getAppsPath(s) + pathToJar + pu + "-" + getSGTestVersion() + ".jar");
     }
 
     public static File getArchive(String pu) {
