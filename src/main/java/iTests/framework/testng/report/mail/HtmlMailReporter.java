@@ -54,13 +54,20 @@ public class HtmlMailReporter {
 
         System.out.println("project name: " + extProperties.getProperty("suiteType"));
         if(extProperties.getProperty("suiteType").contains("XAP")){
-            sb.append("<h1>SGTest XAP Results </h1></br></br></br>").append("\n");
+            sb.append("<h1>SGTest XAP Results </h1></br>").append("\n");
             type = "iTests-XAP";
         }
         else{
-            sb.append("<h1>Cloudify-iTests Results </h1></br></br></br>").append("\n");
+            sb.append("<h1>Cloudify-iTests Results </h1></br>").append("\n");
             type = "iTests-Cloudify";
         }
+        sb.append("<h2> Summary: " +
+                "<font color = \"blue\">" + summaryReport.getTotalTestsRun() +"</font>|" +
+                "<font color = \"red\">" + summaryReport.getFailed() +"</font>|" +
+                "<font color = \"green\">" + summaryReport.getSuccess() +"</font>|" +
+                "<font color = \"orange\">" + summaryReport.getSkipped() +"</font>|" +
+                "<font color = \"coral\">" + summaryReport.getSuspected() +"</font>|" +
+                "</h2>");
 
         sb.append("<h2>Suite Name:  " + summaryReport.getSuiteName() + " </h2></br>").append("\n");
         sb.append("<h4>Duration:  " + WikiUtils.formatDuration(summaryReport.getDuration()) + " </h4></br>").append("\n");
