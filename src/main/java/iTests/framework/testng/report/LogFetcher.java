@@ -139,6 +139,7 @@ public class LogFetcher {
             }
 
             testFolder.mkdir();
+            LogUtils.log("(fetch logs) created test folder in " + testFolder.getAbsolutePath());
             createLogs(className, buildNumber, testFolder);
             createLogs(testName, buildNumber, testFolder);
 
