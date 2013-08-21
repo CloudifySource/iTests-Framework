@@ -28,6 +28,7 @@ public class DumpUtils {
     private static File testFolder;
     private static File zipFile;
     private static File buildFolder;
+    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
 
     public static void dumpALL(Admin admin) {
         dump(admin, null, getAllDumpOptions());
@@ -131,18 +132,21 @@ public class DumpUtils {
     }
 
     public static void copyBeforeConfigurationsLogToTestDir(String testName, String suiteName) {
-    	if (buildFolder == null) {
-    		return;
-    	}
-        File beforeConfigurationsLogDir = new File(buildFolder.getAbsolutePath() + "/" + suiteName + "/" + testName);
-        if (beforeConfigurationsLogDir.exists()) {
-            try {
-            	LogUtils.log("Copying files from source dir:" + beforeConfigurationsLogDir.getAbsolutePath() + " to target dir:" + testFolder.getAbsolutePath());
-                FileUtils.copyDirectory(beforeConfigurationsLogDir, testFolder);
-                LogUtils.log("Deleting directory:" + beforeConfigurationsLogDir.getAbsolutePath());
-                FileUtils.deleteDirectory(beforeConfigurationsLogDir);
-            } catch (IOException e) {
-                LogUtils.log("Failed to copy before configurations to test dir : " + testFolder.getAbsolutePath(), e);
+
+        if(!enableLogstash){
+            if (buildFolder == null) {
+                return;
+            }
+            File beforeConfigurationsLogDir = new File(buildFolder.getAbsolutePath() + "/" + suiteName + "/" + testName);
+            if (beforeConfigurationsLogDir.exists()) {
+                try {
+                    LogUtils.log("Copying files from source dir:" + beforeConfigurationsLogDir.getAbsolutePath() + " to target dir:" + testFolder.getAbsolutePath());
+                    FileUtils.copyDirectory(beforeConfigurationsLogDir, testFolder);
+                    LogUtils.log("Deleting directory:" + beforeConfigurationsLogDir.getAbsolutePath());
+                    FileUtils.deleteDirectory(beforeConfigurationsLogDir);
+                } catch (IOException e) {
+                    LogUtils.log("Failed to copy before configurations to test dir : " + testFolder.getAbsolutePath(), e);
+                }
             }
         }
     }

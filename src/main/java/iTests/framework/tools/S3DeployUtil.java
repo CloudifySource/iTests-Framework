@@ -35,7 +35,7 @@ public class S3DeployUtil {
             String target = buildNumber + "/" + suiteName + "/" + testName;
             BlobStoreContext context;
             Set<Module> wiring = new HashSet<Module>();
-            context = new BlobStoreContextFactory().createContext("aws-s3", user, key, wiring, new Properties());
+            context = new BlobStoreContextFactory().createContext("s3", user, key, wiring, new Properties());
             S3Client client = S3Client.class.cast(context.getProviderSpecificContext().getApi());
             BlobStore store = context.getBlobStore();
 
