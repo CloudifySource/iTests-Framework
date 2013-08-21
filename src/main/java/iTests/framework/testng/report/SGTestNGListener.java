@@ -40,9 +40,11 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onStart(ITestContext iTestContext) {
     	suiteName = System.getProperty("iTests.suiteName");
+        LogUtils.log("suite number is now (on start) - " + buildNumber);
 
-        if(!enableLogstash){
+        if(enableLogstash){
             buildNumber = System.getProperty("iTests.buildNumber");
+            LogUtils.log("build number is now (on start) - " + buildNumber);
             version = System.getProperty("cloudifyVersion");
         }
     }
@@ -117,9 +119,10 @@ public class SGTestNGListener extends TestListenerAdapter {
         if(enableLogstash){
             super.beforeConfiguration(tr);
             if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
-                suiteName = System.getProperty("iTests.suiteName", "suite_nir");
-                buildNumber = System.getProperty("iTests.buildNumber", "build_nir_1");
-                version = System.getProperty("cloudifyVersion", "version_nir");
+                suiteName = System.getProperty("iTests.suiteName");
+                buildNumber = System.getProperty("iTests.buildNumber");
+                LogUtils.log("build number is now - " + buildNumber);
+                version = System.getProperty("cloudifyVersion");
             }
 
             initLogstash2(tr);
