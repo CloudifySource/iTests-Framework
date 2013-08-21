@@ -51,7 +51,7 @@ public class SGTestNGListener extends TestListenerAdapter {
 
     private void initLogstash2(ITestResult tr) {
 
-        String simpleTestName = tr.getTestClass().getRealClass().getSimpleName();
+        String simpleClassName = tr.getTestClass().getRealClass().getSimpleName();
         String pathToLogstash = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/logstash";
         confFilePath2 = pathToLogstash + "/logstash-shipper-client-2.conf";
 
@@ -62,13 +62,13 @@ public class SGTestNGListener extends TestListenerAdapter {
                 IOUtils.replaceTextInFile(confFilePath2, "<path_to_build>", SGTestHelper.getBuildDir());
                 IOUtils.replaceTextInFile(confFilePath2, "<path_to_test_class_folder>", SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/../" + suiteName + "/" + tr.getTestClass().getName());
                 IOUtils.replaceTextInFile(confFilePath2, "<suite_name>", suiteName);
-                IOUtils.replaceTextInFile(confFilePath2, "<test_name>", simpleTestName);
+                IOUtils.replaceTextInFile(confFilePath2, "<test_name>", simpleClassName);
                 IOUtils.replaceTextInFile(confFilePath2, "<build_number>", buildNumber);
                 IOUtils.replaceTextInFile(confFilePath2, "<version>", version);
 
 
                 String logstashJarPath = DeploymentUtils.getLocalRepository() + "net/logstash/1.1.13/logstash-1.1.13.jar";
-                logstashLogPath2 = pathToLogstash + "/logstash-" + simpleTestName + "-2.txt";
+                logstashLogPath2 = pathToLogstash + "/logstash-" + simpleClassName + "-2.txt";
                 String cmdLine = "java -jar " + logstashJarPath + " agent -f " + confFilePath2 + " -l " + logstashLogPath2;
 
                 final String[] parts = cmdLine.split(" ");

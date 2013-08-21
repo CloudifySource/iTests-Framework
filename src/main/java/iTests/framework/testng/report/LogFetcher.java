@@ -46,7 +46,7 @@ public class LogFetcher {
         String testName = TestNGUtils.constructTestMethodName(result);
         File testDir = new File(getBuildFolder() + "/" + suiteName + "/" + testName);
 
-        String className = testName.substring(0, testName.lastIndexOf("."));
+        String className = result.getTestClass().getRealClass().getSimpleName();
         File testFolder = getTestFolder(testName);
 
         if(enableLogstash){
