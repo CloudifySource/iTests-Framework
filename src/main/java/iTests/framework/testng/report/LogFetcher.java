@@ -61,6 +61,7 @@ public class LogFetcher {
             S3DeployUtil.uploadLogFile(testDir, buildNumber, suiteName, testName);
         }
         else if(enableLogstash){
+            LogUtils.log("uploading to s3 from " + testFolder);
             S3DeployUtil.uploadLogFile(testFolder, buildNumber, suiteName, testName);
         }
 
