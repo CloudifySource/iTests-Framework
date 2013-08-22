@@ -35,13 +35,14 @@ public class LogFetcher {
     private static final String GIGASPACES_QUALITY_S3 = "http://gigaspaces-quality.s3.amazonaws.com/";
     boolean isCloudEnabled = Boolean.parseBoolean(System.getProperty("iTests.cloud.enabled", "false"));
     private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+    private String suiteName;
 
     public LogFetcher() {
     }
 
     public List<TestLog> getLogs(ITestResult result) {
         List<TestLog> logs = new ArrayList<TestLog>();
-        String suiteName = System.getProperty("iTests.suiteName");
+        suiteName = System.getProperty("iTests.suiteName");
         String buildNumber = System.getProperty("iTests.buildNumber");
         String testName = TestNGUtils.constructTestMethodName(result);
         File testDir = new File(getBuildFolder() + "/" + suiteName + "/" + testName);
@@ -118,6 +119,14 @@ public class LogFetcher {
         else{
             ans = getUrl() + path.substring(index);
         }
+
+        if(enableLogstash){
+            StringBuilder finalUrl = new StringBuilder(ans);
+            int suiteStartIndex = ans.indexOf("/") + 1;
+            finalUrl.insert(suiteStartIndex, suiteName + "/");
+            ans = finalUrl.toString();
+        }
+
         return ans;
     }
 
@@ -132,8 +141,7 @@ public class LogFetcher {
     public static void getTestLogstashLogs(String buildNumber, String className, String testName) throws IOException {
 
         try {
-            String testFolderPath = SGTestHelper.getSGTestRootDir() + "/../" + testName;
-            File testFolder = new File(testFolderPath);
+            File testFolder = getTestFolder(testName);
 
             if(testFolder.exists()){
                 FileUtils.deleteQuietly(testFolder);
