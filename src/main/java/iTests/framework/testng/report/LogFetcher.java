@@ -3,6 +3,7 @@ package iTests.framework.testng.report;
 import iTests.framework.testng.report.xml.TestLog;
 import iTests.framework.tools.S3DeployUtil;
 import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.TestNGUtils;
 import org.apache.commons.io.FileUtils;
@@ -19,10 +20,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.elasticsearch.search.sort.SortBuilders.fieldSort;
 
@@ -35,6 +33,7 @@ public class LogFetcher {
     private static final String GIGASPACES_QUALITY_S3 = "http://gigaspaces-quality.s3.amazonaws.com/";
     boolean isCloudEnabled = Boolean.parseBoolean(System.getProperty("iTests.cloud.enabled", "false"));
     private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+    private static File propsFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash/logstash.properties");
     private String suiteName;
 
     public LogFetcher() {
@@ -67,7 +66,9 @@ public class LogFetcher {
         }
 
         if(enableLogstash){
-            return fetchLogs(testFolder, logs);
+            List<TestLog> testLogs = fetchLogs(testFolder, logs);
+            FileUtils.deleteQuietly(testFolder);
+            return testLogs;
         }
         return fetchLogs(testDir, logs);
     }
@@ -166,15 +167,24 @@ public class LogFetcher {
     private static void createLogs(String tagToSearch, String buildNumber, File testFolder) throws Exception {
 
         Set<String> fileNames = new HashSet<String>();
-        Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress("ec2-54-226-197-33.compute-1.amazonaws.com", 9300));
+
+        Properties props;
+        try {
+            props = IOUtils.readPropertiesFromFile(propsFile);
+        } catch (final Exception e) {
+            throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
+        }
+        String logstashServerHost = props.getProperty("logstash_server_host");
+        int logstashServerPort = Integer.parseInt(props.getProperty("logstash_server_port"));
+        Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(logstashServerHost, logstashServerPort));
 
         int hitsPerSearch = 200;
         int currentOffset = 0;
 
-        while (true) {
+        String query = "@tags:\"" + tagToSearch + "\" AND @tags:\"" + buildNumber + "\"";
+        LogUtils.log("query: " + query);
 
-            String query = "@tags:\"" + tagToSearch + "\" AND @tags:\"" + buildNumber + "\"";
-            LogUtils.log("query: " + query);
+        while (true) {
 
             SearchResponse response = client.prepareSearch()
                     .setQuery(QueryBuilders.queryString(query))
@@ -229,7 +239,6 @@ public class LogFetcher {
                 for (SearchHit hit : resp.getHits()) {
 
                     message = hit.getSource().get("@message").toString();
-                    LogUtils.log(index + " - timestamp: " + hit.getSource().get("@timestamp"));
 
                     bw.write(message + "\n");
                     index++;
