@@ -7,7 +7,6 @@ import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ZipUtils;
 import iTests.framework.utils.TestNGUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
@@ -301,8 +300,6 @@ public class SGTestNGListener extends TestListenerAdapter {
 
     private void killLogstashAgent(int logAgentNumber, String logstashLogPath) {
 
-        LogUtils.log("logstash, kill yourself");
-
         FileObject listendir;
         CustomFileListener listener = new CustomFileListener();
         long TIMEOUT_BETWEEN_FILE_QUERYING = 1000;
@@ -373,9 +370,9 @@ public class SGTestNGListener extends TestListenerAdapter {
             e.printStackTrace();
         }
 
-        if(logstashOutputFile.exists()){
-            FileUtils.deleteQuietly(logstashOutputFile);
-        }
+//        if(logstashOutputFile.exists()){
+//            FileUtils.deleteQuietly(logstashOutputFile);
+//        }
     }
 
 //    public static void main(String[] args) throws IOException {
