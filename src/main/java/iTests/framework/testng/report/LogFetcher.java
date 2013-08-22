@@ -121,8 +121,9 @@ public class LogFetcher {
         }
 
         if(enableLogstash){
+            //TODO adapt to sgtest service - different url
             StringBuilder finalUrl = new StringBuilder(ans);
-            int suiteStartIndex = ans.indexOf("/") + 1;
+            int suiteStartIndex = ans.indexOf("/", index) + 1;
             finalUrl.insert(suiteStartIndex, suiteName + "/");
             ans = finalUrl.toString();
         }
