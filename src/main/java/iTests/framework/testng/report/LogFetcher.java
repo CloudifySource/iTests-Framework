@@ -181,10 +181,10 @@ public class LogFetcher {
         int hitsPerSearch = 200;
         int currentOffset = 0;
 
-        String query = "@tags:\"" + tagToSearch + "\" AND @tags:\"" + buildNumber + "\"";
-        LogUtils.log("query: " + query);
-
         while (true) {
+
+            String query = "@tags:\"" + tagToSearch + "\" AND @tags:\"" + buildNumber + "\"";
+            LogUtils.log("query: " + query);
 
             SearchResponse response = client.prepareSearch()
                     .setQuery(QueryBuilders.queryString(query))
