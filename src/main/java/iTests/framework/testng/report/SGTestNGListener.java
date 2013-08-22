@@ -152,9 +152,6 @@ public class SGTestNGListener extends TestListenerAdapter {
         if (isAfter(iTestResult)) {
             DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
             if(enableLogstash){
-                if(process != null){
-                    killLogstashAgent(1, logstashLogPath);
-                }
                 if(process2 != null && iTestResult.getMethod().isAfterClassConfiguration()){
                     killLogstashAgent(2, logstashLogPath2);
                 }
@@ -185,9 +182,6 @@ public class SGTestNGListener extends TestListenerAdapter {
         if (isAfter(iTestResult)) {
             DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
             if(enableLogstash){
-                if(process != null){
-                    killLogstashAgent(1, logstashLogPath);
-                }
                 if(process2 != null && iTestResult.getMethod().isAfterClassConfiguration()){
                     killLogstashAgent(2, logstashLogPath2);
                 }
@@ -215,9 +209,6 @@ public class SGTestNGListener extends TestListenerAdapter {
         if (isAfter(iTestResult)) {
             DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
             if(enableLogstash){
-                if(process != null){
-                    killLogstashAgent(1, logstashLogPath);
-                }
                 if(process2 != null && iTestResult.getMethod().isAfterClassConfiguration()){
                     killLogstashAgent(2, logstashLogPath2);
                 }
@@ -242,6 +233,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
         LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
+        if(enableLogstash){
+            if(process != null){
+                killLogstashAgent(1, logstashLogPath);
+            }
+        }
     }
 
     @Override
@@ -250,6 +246,11 @@ public class SGTestNGListener extends TestListenerAdapter {
 		testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
 		LogUtils.log("Test Skipped: " + testMethodName, iTestResult.getThrowable());
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
+        if(enableLogstash){
+            if(process != null){
+                killLogstashAgent(1, logstashLogPath);
+            }
+        }
 	}
 
 	@Override
@@ -258,6 +259,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
         LogUtils.log("Test Passed: " + testMethodName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
+        if(enableLogstash){
+            if(process != null){
+                killLogstashAgent(1, logstashLogPath);
+            }
+        }
     }
 
     @Override
