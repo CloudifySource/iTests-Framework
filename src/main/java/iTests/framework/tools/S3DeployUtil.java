@@ -54,18 +54,21 @@ public class S3DeployUtil {
         else{
 
             LogUtils.log("Processing " + source + ", upload size is: " + (source).length() + ". Target: " + target);
-
             Date expires = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(ITESTS_LOG_EXPIRATION_IN_DAYS));
-            Blob blob = store.blobBuilder(target)
-                    .payload(source)
-                    .build();
-            blob.getMetadata().getContentMetadata().setExpires(expires);
-            store.putBlob(container, blob);
-            LogUtils.log("Upload of " + source + " was ended successfully");
-
+            try {
+                Blob blob = store.blobBuilder(target)
+                        .payload(source)
+                        .build();
+                blob.getMetadata().getContentMetadata().setExpires(expires);
+                store.putBlob(container, blob);
+                LogUtils.log("Upload of " + source + " was ended successfully");
                 String ownerId = client.getObjectACL(container, target).getOwner().getId();
                 client.putObjectACL(container, target,
                         AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PUBLIC_READ, ownerId));
+            }
+            catch (Exception e){
+                LogUtils.log("Upload of Log file: " + source + " Failed!",e);
+            }
         }
     }
 
