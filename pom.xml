@@ -170,6 +170,16 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>net</groupId>
+            <artifactId>logstash</artifactId>
+            <version>1.1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>0.20.6</version>
+        </dependency>
     </dependencies>
 
     <profiles>
