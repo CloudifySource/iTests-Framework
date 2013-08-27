@@ -7,7 +7,7 @@ import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ZipUtils;
 import iTests.framework.utils.TestNGUtils;
-import org.apache.commons.io.FileUtils;
+//import org.apache.commons.io.FileUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
@@ -57,7 +57,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         backupFilePath2 = pathToLogstash + "/logstash-shipper-client-2-" + simpleClassName + ".conf";
         File backupFile2 = new File(backupFilePath2);
 
-        if(process2 == null && !isAfter(tr) && !backupFile2.exists()){
+        if(!isAfter(tr) && !backupFile2.exists()){
 
             try {
 //                backupFilePath2 = IOUtils.backupFile(confFilePath2);
@@ -382,9 +382,9 @@ public class SGTestNGListener extends TestListenerAdapter {
             e.printStackTrace();
         }
 
-        if(logstashOutputFile.exists()){
-            FileUtils.deleteQuietly(logstashOutputFile);
-        }
+//        if(logstashOutputFile.exists()){
+//            FileUtils.deleteQuietly(logstashOutputFile);
+//        }
     }
 
 }
