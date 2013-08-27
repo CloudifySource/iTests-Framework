@@ -62,7 +62,7 @@ public class SGTestNGListener extends TestListenerAdapter {
             try {
 //                backupFilePath2 = IOUtils.backupFile(confFilePath2);
                 LogUtils.log("copying file " + confFilePath2 + " to " + backupFilePath2);
-                IOUtils.copyFile(confFilePath, backupFilePath2);
+                IOUtils.copyFile(confFilePath2, backupFilePath2);
                 IOUtils.replaceTextInFile(backupFilePath2, "<path_to_build>", SGTestHelper.getBuildDir());
                 IOUtils.replaceTextInFile(backupFilePath2, "<path_to_test_class_folder>", SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/../" + suiteName + "/" + tr.getTestClass().getName());
                 IOUtils.replaceTextInFile(backupFilePath2, "<suite_name>", suiteName);
