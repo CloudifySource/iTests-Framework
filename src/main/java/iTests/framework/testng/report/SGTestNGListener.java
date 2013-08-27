@@ -54,22 +54,26 @@ public class SGTestNGListener extends TestListenerAdapter {
         String simpleClassName = tr.getTestClass().getRealClass().getSimpleName();
         String pathToLogstash = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/logstash";
         confFilePath2 = pathToLogstash + "/logstash-shipper-client-2.conf";
+        backupFilePath2 = pathToLogstash + "/logstash-shipper-client-2-" + simpleClassName + ".conf";
+        File backupFile2 = new File(backupFilePath2);
 
-        if(process2 == null && !isAfter(tr)){
+        if(process2 == null && !isAfter(tr) && !backupFile2.exists()){
 
             try {
-                backupFilePath2 = IOUtils.backupFile(confFilePath2);
-                IOUtils.replaceTextInFile(confFilePath2, "<path_to_build>", SGTestHelper.getBuildDir());
-                IOUtils.replaceTextInFile(confFilePath2, "<path_to_test_class_folder>", SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/../" + suiteName + "/" + tr.getTestClass().getName());
-                IOUtils.replaceTextInFile(confFilePath2, "<suite_name>", suiteName);
-                IOUtils.replaceTextInFile(confFilePath2, "<test_name>", simpleClassName);
-                IOUtils.replaceTextInFile(confFilePath2, "<build_number>", buildNumber);
-                IOUtils.replaceTextInFile(confFilePath2, "<version>", version);
+//                backupFilePath2 = IOUtils.backupFile(confFilePath2);
+                LogUtils.log("copying file " + confFilePath2 + " to " + backupFilePath2);
+                IOUtils.copyFile(confFilePath, backupFilePath2);
+                IOUtils.replaceTextInFile(backupFilePath2, "<path_to_build>", SGTestHelper.getBuildDir());
+                IOUtils.replaceTextInFile(backupFilePath2, "<path_to_test_class_folder>", SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/../" + suiteName + "/" + tr.getTestClass().getName());
+                IOUtils.replaceTextInFile(backupFilePath2, "<suite_name>", suiteName);
+                IOUtils.replaceTextInFile(backupFilePath2, "<test_name>", simpleClassName);
+                IOUtils.replaceTextInFile(backupFilePath2, "<build_number>", buildNumber);
+                IOUtils.replaceTextInFile(backupFilePath2, "<version>", version);
 
 
                 String logstashJarPath = DeploymentUtils.getLocalRepository() + "net/logstash/1.1.13/logstash-1.1.13.jar";
                 logstashLogPath2 = pathToLogstash + "/logstash-" + simpleClassName + "-2.txt";
-                String cmdLine = "java -jar " + logstashJarPath + " agent -f " + confFilePath2 + " -l " + logstashLogPath2;
+                String cmdLine = "java -jar " + logstashJarPath + " agent -f " + backupFilePath2 + " -l " + logstashLogPath2;
 
                 final String[] parts = cmdLine.split(" ");
                 final ProcessBuilder pb = new ProcessBuilder(parts);
@@ -86,20 +90,24 @@ public class SGTestNGListener extends TestListenerAdapter {
     private void initLogstash(String testName) {
         String pathToLogstash = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/logstash";
         confFilePath = pathToLogstash + "/logstash-shipper-client.conf";
+        backupFilePath = pathToLogstash + "/logstash-shipper-client-" + testName + ".conf";
 
         if(process == null){
 
             try {
-                backupFilePath = IOUtils.backupFile(confFilePath);
-                IOUtils.replaceTextInFile(confFilePath, "<path_to_test_folder>", SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/../" + suiteName + "/" + testName);
-                IOUtils.replaceTextInFile(confFilePath, "<suite_name>", suiteName);
-                IOUtils.replaceTextInFile(confFilePath, "<test_name>", testName);
-                IOUtils.replaceTextInFile(confFilePath, "<build_number>", buildNumber);
-                IOUtils.replaceTextInFile(confFilePath, "<version>", version);
+
+                LogUtils.log("copying file " + confFilePath + " to " + backupFilePath);
+                IOUtils.copyFile(confFilePath, backupFilePath);
+//                backupFilePath = IOUtils.backupFile(confFilePath);
+                IOUtils.replaceTextInFile(backupFilePath, "<path_to_test_folder>", SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/../" + suiteName + "/" + testName);
+                IOUtils.replaceTextInFile(backupFilePath, "<suite_name>", suiteName);
+                IOUtils.replaceTextInFile(backupFilePath, "<test_name>", testName);
+                IOUtils.replaceTextInFile(backupFilePath, "<build_number>", buildNumber);
+                IOUtils.replaceTextInFile(backupFilePath, "<version>", version);
 
                 String logstashJarPath = DeploymentUtils.getLocalRepository() + "net/logstash/1.1.13/logstash-1.1.13.jar";
                 logstashLogPath = pathToLogstash + "/logstash-" + testName + ".txt";
-                String cmdLine = "java -jar " + logstashJarPath + " agent -f " + confFilePath + " -l " + logstashLogPath;
+                String cmdLine = "java -jar " + logstashJarPath + " agent -f " + backupFilePath + " -l " + logstashLogPath;
 
                 final String[] parts = cmdLine.split(" ");
                 final ProcessBuilder pb = new ProcessBuilder(parts);
@@ -360,13 +368,16 @@ public class SGTestNGListener extends TestListenerAdapter {
 
             LogUtils.log("returning logstash config file to initial state");
             if(logAgentNumber == 1){
-                IOUtils.replaceFileWithMove(new File(confFilePath), new File(backupFilePath));
+//                IOUtils.replaceFileWithMove(new File(confFilePath), new File(backupFilePath));
+//                FileUtils.deleteQuietly(new File(backupFilePath));
             }
             else{
-                IOUtils.replaceFileWithMove(new File(confFilePath2), new File(backupFilePath2));
+//                IOUtils.replaceFileWithMove(new File(confFilePath2), new File(backupFilePath2));
+//                FileUtils.deleteQuietly(new File(backupFilePath2));
+
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
