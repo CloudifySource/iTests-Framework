@@ -28,7 +28,7 @@ public class DumpUtils {
     private static File testFolder;
     private static File zipFile;
     private static File buildFolder;
-    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
 
     public static void dumpALL(Admin admin) {
         dump(admin, null, getAllDumpOptions());

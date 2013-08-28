@@ -35,7 +35,7 @@ public class SGTestNGListener extends TestListenerAdapter {
     private String backupFilePath2;
     private String logstashLogPath;
     private String logstashLogPath2;
-    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
 
     @Override
     public void onStart(ITestContext iTestContext) {

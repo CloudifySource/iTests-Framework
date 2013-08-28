@@ -32,7 +32,7 @@ public class LogFetcher {
     private static final String REPORT_URL_KEY = "iTests.url";
     private static final String GIGASPACES_QUALITY_S3 = "http://gigaspaces-quality.s3.amazonaws.com/";
     boolean isCloudEnabled = Boolean.parseBoolean(System.getProperty("iTests.cloud.enabled", "false"));
-    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
     private static File propsFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash/logstash.properties");
     private String suiteName;
 
