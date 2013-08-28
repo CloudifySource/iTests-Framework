@@ -159,7 +159,6 @@ public class SGTestNGListener extends TestListenerAdapter {
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
 
         if (isAfter(iTestResult)) {
-            DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
             if(enableLogstash){
                 if(process != null){
                     killLogstashAgent(1, logstashLogPath);
@@ -192,7 +191,6 @@ public class SGTestNGListener extends TestListenerAdapter {
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
 
         if (isAfter(iTestResult)) {
-            DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
             if(enableLogstash){
                 if(process != null){
                     killLogstashAgent(1, logstashLogPath);
@@ -222,7 +220,6 @@ public class SGTestNGListener extends TestListenerAdapter {
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
 
         if (isAfter(iTestResult)) {
-            DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
             if(enableLogstash){
                 if(process != null){
                     killLogstashAgent(1, logstashLogPath);
@@ -233,7 +230,6 @@ public class SGTestNGListener extends TestListenerAdapter {
             }
         }
     }
-
 
     @Override
     public void onTestStart(ITestResult iTestResult) {
