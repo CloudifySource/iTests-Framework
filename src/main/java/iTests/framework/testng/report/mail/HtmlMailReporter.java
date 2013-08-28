@@ -15,6 +15,7 @@ import java.util.StringTokenizer;
 
 public class HtmlMailReporter {
 
+    boolean isCloudEnabled = Boolean.parseBoolean(System.getProperty("iTests.cloud.enabled", "false"));
     protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
 
@@ -112,9 +113,17 @@ public class HtmlMailReporter {
         else
             buildNumberForDB = buildNumber;
 
-        DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumberForDB, majorVersion, minorVersion,
-				summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
-				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), 0/*orphans*/, wikiPageUrl, "", type);
+        if(!isCloudEnabled) {
+            try {
+                DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumberForDB, majorVersion, minorVersion,
+                        summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
+                        summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), 0/*orphans*/, wikiPageUrl, "", type);
+            }
+            catch (Exception e){
+                System.out.println("Failed to write to DB with DashboardDBReporter");
+            }
+        }
+
     }
 
     static String getFullBuildLog(String buildLog) {
