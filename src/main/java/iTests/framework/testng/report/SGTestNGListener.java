@@ -57,6 +57,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         backupFilePath2 = pathToLogstash + "/logstash-shipper-client-2-" + simpleClassName + ".conf";
         File backupFile2 = new File(backupFilePath2);
 
+        LogUtils.log("trying to start logstash agent number 2. simple class name is " + simpleClassName);
+        if(backupFile2.exists()){
+            LogUtils.log("the file " + backupFilePath2 + " already exists. not starting logstash");
+        }
+
         if(!isAfter(tr) && !backupFile2.exists()){
 
             try {

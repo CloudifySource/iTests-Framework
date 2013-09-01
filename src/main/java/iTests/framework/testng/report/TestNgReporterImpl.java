@@ -66,7 +66,7 @@ public class TestNgReporterImpl implements IReporter {
                 isSuspect = isTestSuspect(iTestResult);
                 TestReport testReport = new TestReport(iTestResult.getTestClass().getName() + "." + iTestResult.getName());
                 testReport.setDuration(iTestResult.getEndMillis() - iTestResult.getStartMillis());
-                testReport.setLogs(logFetcher.getLogs(iTestResult));
+                testReport.setLogs(logFetcher.getLogs(testStatus, iTestResult));
 
                 switch (testStatus) {
                     case FAILED_CONFIG:

@@ -40,6 +40,10 @@ public class LogFetcher {
     }
 
     public List<TestLog> getLogs(ITestResult result) {
+        return getLogs(null, result);
+    }
+
+    public List<TestLog> getLogs(TestStatus testStatus, ITestResult result) {
         List<TestLog> logs = new ArrayList<TestLog>();
         suiteName = System.getProperty("iTests.suiteName");
         String buildNumber = System.getProperty("iTests.buildNumber");
@@ -49,20 +53,23 @@ public class LogFetcher {
         String className = result.getTestClass().getRealClass().getSimpleName();
         File testFolder = getTestFolder(testName);
 
-        if(enableLogstash){
+        if(enableLogstash && testStatus != null && (testStatus.equals(TestStatus.PASSED_TEST) ||
+                                                    testStatus.equals(TestStatus.FAILED_TEST) ||
+                                                    testStatus.equals(TestStatus.SKIPPED_TEST))){
             try {
                 getTestLogstashLogs(buildNumber, className, testName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            if(!isCloudEnabled){
+                LogUtils.log("uploading to s3 from " + testFolder);
+                S3DeployUtil.uploadLogFile(testFolder, buildNumber, suiteName, testName);
+            }
         }
 
         if(isCloudEnabled){
             S3DeployUtil.uploadLogFile(testDir, buildNumber, suiteName, testName);
-        }
-        else if(enableLogstash){
-            LogUtils.log("uploading to s3 from " + testFolder);
-            S3DeployUtil.uploadLogFile(testFolder, buildNumber, suiteName, testName);
         }
 
         if(enableLogstash){
