@@ -41,7 +41,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         if(enableLogstash){
             LogUtils.log("in SGTestNGListener constructor. Sleeping for 20 seconds..");
             try {
-                TimeUnit.SECONDS.sleep(20);
+                Thread.sleep(20 * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
