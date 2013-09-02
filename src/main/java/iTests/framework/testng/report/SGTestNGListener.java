@@ -150,7 +150,10 @@ public class SGTestNGListener extends TestListenerAdapter {
                 version = System.getProperty("cloudifyVersion");
             }
 
-            initLogstash2(tr);
+            if(tr.getMethod().isBeforeClassConfiguration()){
+                LogUtils.log("in before configuration (before class configuration)");
+                initLogstash2(tr);
+            }
         }
     }
 
