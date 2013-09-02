@@ -37,6 +37,17 @@ public class SGTestNGListener extends TestListenerAdapter {
     private String logstashLogPath2;
     private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
 
+    public SGTestNGListener(){
+        if(enableLogstash){
+            LogUtils.log("in SGTestNGListener constructor. Sleeping for 10 seconds..");
+            try {
+                TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public void onStart(ITestContext iTestContext) {
     	suiteName = System.getProperty("iTests.suiteName");
