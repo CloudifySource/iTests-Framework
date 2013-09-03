@@ -139,23 +139,18 @@ public class SGTestNGListener extends TestListenerAdapter {
         }
     }
 
-//    @Override
-//    public void beforeConfiguration(ITestResult tr) {
-//        if(enableLogstash){
-//            super.beforeConfiguration(tr);
-//            if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
-//                suiteName = System.getProperty("iTests.suiteName");
-//                buildNumber = System.getProperty("iTests.buildNumber");
-//                LogUtils.log("build number is now - " + buildNumber);
-//                version = System.getProperty("cloudifyVersion");
-//            }
-//
-//            if(tr.getMethod().isBeforeClassConfiguration()){
-//                LogUtils.log("in before configuration (before class configuration)");
-//                initLogstash2(tr);
-//            }
-//        }
-//    }
+    @Override
+    public void beforeConfiguration(ITestResult tr) {
+        if(enableLogstash){
+            super.beforeConfiguration(tr);
+            if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
+                suiteName = System.getProperty("iTests.suiteName");
+                buildNumber = System.getProperty("iTests.buildNumber");
+                LogUtils.log("build number is now - " + buildNumber);
+                version = System.getProperty("cloudifyVersion");
+            }
+        }
+    }
 
     @Override
     public void onConfigurationSuccess(ITestResult iTestResult) {
