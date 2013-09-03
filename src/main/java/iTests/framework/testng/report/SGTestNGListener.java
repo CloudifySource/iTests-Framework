@@ -51,7 +51,7 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onStart(ITestContext iTestContext) {
     	suiteName = System.getProperty("iTests.suiteName");
-        LogUtils.log("suite number is now (on start) - " + buildNumber);
+        LogUtils.log("suite number is now (on start) - " + suiteName);
 
         if(enableLogstash){
             buildNumber = System.getProperty("iTests.buildNumber");
@@ -139,23 +139,23 @@ public class SGTestNGListener extends TestListenerAdapter {
         }
     }
 
-    @Override
-    public void beforeConfiguration(ITestResult tr) {
-        if(enableLogstash){
-            super.beforeConfiguration(tr);
-            if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
-                suiteName = System.getProperty("iTests.suiteName");
-                buildNumber = System.getProperty("iTests.buildNumber");
-                LogUtils.log("build number is now - " + buildNumber);
-                version = System.getProperty("cloudifyVersion");
-            }
-
-            if(tr.getMethod().isBeforeClassConfiguration()){
-                LogUtils.log("in before configuration (before class configuration)");
-                initLogstash2(tr);
-            }
-        }
-    }
+//    @Override
+//    public void beforeConfiguration(ITestResult tr) {
+//        if(enableLogstash){
+//            super.beforeConfiguration(tr);
+//            if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
+//                suiteName = System.getProperty("iTests.suiteName");
+//                buildNumber = System.getProperty("iTests.buildNumber");
+//                LogUtils.log("build number is now - " + buildNumber);
+//                version = System.getProperty("cloudifyVersion");
+//            }
+//
+//            if(tr.getMethod().isBeforeClassConfiguration()){
+//                LogUtils.log("in before configuration (before class configuration)");
+//                initLogstash2(tr);
+//            }
+//        }
+//    }
 
     @Override
     public void onConfigurationSuccess(ITestResult iTestResult) {
@@ -170,6 +170,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         	suiteName = System.getProperty("iTests.suiteName");
         }
         LogUtils.log("Configuration Succeeded: " + configurationName);
+
+        if(enableLogstash && iTestResult.getMethod().isBeforeSuiteConfiguration()){
+            initLogstash2(iTestResult);
+        }
+
         ZipUtils.unzipArchive(testMethodName, suiteName);
 
         if (enableLogstash && isAfter(iTestResult) && !iTestResult.getMethod().isAfterClassConfiguration() && !iTestResult.getMethod().isAfterSuiteConfiguration()) {
@@ -203,6 +208,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         	suiteName = System.getProperty("iTests.suiteName");
         }
         LogUtils.log("Configuration Failed: " + configurationName, iTestResult.getThrowable());
+
+        if(enableLogstash && iTestResult.getMethod().isBeforeSuiteConfiguration()){
+            initLogstash2(iTestResult);
+        }
+
         ZipUtils.unzipArchive(testMethodName, suiteName);
 
         if (enableLogstash && isAfter(iTestResult) && !iTestResult.getMethod().isAfterClassConfiguration() && !iTestResult.getMethod().isAfterSuiteConfiguration()) {
@@ -232,6 +242,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         	testName = testMethodName;
         }
         LogUtils.log("Configuration Skipped: " + configurationName, iTestResult.getThrowable());
+
+        if(enableLogstash && iTestResult.getMethod().isBeforeSuiteConfiguration()){
+            initLogstash2(iTestResult);
+        }
+
         ZipUtils.unzipArchive(testMethodName, suiteName);
 
         if (enableLogstash && isAfter(iTestResult) && !iTestResult.getMethod().isAfterClassConfiguration() && !iTestResult.getMethod().isAfterSuiteConfiguration()) {
