@@ -39,12 +39,7 @@ public class SGTestNGListener extends TestListenerAdapter {
 
     public SGTestNGListener(){
         if(enableLogstash){
-            LogUtils.log("in SGTestNGListener constructor. Sleeping for 20 seconds..");
-            try {
-                Thread.sleep(20 * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            LogUtils.log("in SGTestNGListener constructor");
         }
     }
 
@@ -166,7 +161,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         }
         LogUtils.log("Configuration Succeeded: " + configurationName);
 
-        if(enableLogstash && iTestResult.getMethod().isBeforeSuiteConfiguration()){
+        if(enableLogstash && iTestResult.getMethod().isBeforeClassConfiguration()){
             initLogstash2(iTestResult);
         }
 
@@ -204,7 +199,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         }
         LogUtils.log("Configuration Failed: " + configurationName, iTestResult.getThrowable());
 
-        if(enableLogstash && iTestResult.getMethod().isBeforeSuiteConfiguration()){
+        if(enableLogstash && iTestResult.getMethod().isBeforeClassConfiguration()){
             initLogstash2(iTestResult);
         }
 
@@ -238,7 +233,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         }
         LogUtils.log("Configuration Skipped: " + configurationName, iTestResult.getThrowable());
 
-        if(enableLogstash && iTestResult.getMethod().isBeforeSuiteConfiguration()){
+        if(enableLogstash && iTestResult.getMethod().isBeforeClassConfiguration()){
             initLogstash2(iTestResult);
         }
 
