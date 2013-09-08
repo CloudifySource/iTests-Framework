@@ -37,10 +37,16 @@ public class SGTestNGListener extends TestListenerAdapter {
     private String logstashLogPath2;
     private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
 
+    public SGTestNGListener(){
+        if(enableLogstash){
+            LogUtils.log("in SGTestNGListener constructor");
+        }
+    }
+
     @Override
     public void onStart(ITestContext iTestContext) {
     	suiteName = System.getProperty("iTests.suiteName");
-        LogUtils.log("suite number is now (on start) - " + buildNumber);
+        LogUtils.log("suite number is now (on start) - " + suiteName);
 
         if(enableLogstash){
             buildNumber = System.getProperty("iTests.buildNumber");
@@ -57,6 +63,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         backupFilePath2 = pathToLogstash + "/logstash-shipper-client-2-" + simpleClassName + ".conf";
         File backupFile2 = new File(backupFilePath2);
 
+        LogUtils.log("trying to start logstash agent number 2. simple class name is " + simpleClassName);
+        if(backupFile2.exists()){
+            LogUtils.log("the file " + backupFilePath2 + " already exists. not starting logstash");
+        }
+
         if(!isAfter(tr) && !backupFile2.exists()){
 
             try {
@@ -64,6 +75,7 @@ public class SGTestNGListener extends TestListenerAdapter {
                 LogUtils.log("copying file " + confFilePath2 + " to " + backupFilePath2);
                 IOUtils.copyFile(confFilePath2, backupFilePath2);
                 IOUtils.replaceTextInFile(backupFilePath2, "<path_to_build>", SGTestHelper.getBuildDir());
+                IOUtils.replaceTextInFile(backupFilePath2, "<suite_number>", "suite_" + System.getProperty("iTests.suiteId", "0"));
                 IOUtils.replaceTextInFile(backupFilePath2, "<path_to_test_class_folder>", SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/../" + suiteName + "/" + tr.getTestClass().getName());
                 IOUtils.replaceTextInFile(backupFilePath2, "<suite_name>", suiteName);
                 IOUtils.replaceTextInFile(backupFilePath2, "<test_name>", simpleClassName);
@@ -132,8 +144,6 @@ public class SGTestNGListener extends TestListenerAdapter {
                 LogUtils.log("build number is now - " + buildNumber);
                 version = System.getProperty("cloudifyVersion");
             }
-
-            initLogstash2(tr);
         }
     }
 
@@ -150,6 +160,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         	suiteName = System.getProperty("iTests.suiteName");
         }
         LogUtils.log("Configuration Succeeded: " + configurationName);
+
+        if(enableLogstash && iTestResult.getMethod().isBeforeClassConfiguration()){
+            initLogstash2(iTestResult);
+        }
+
         ZipUtils.unzipArchive(testMethodName, suiteName);
 
         if (enableLogstash && isAfter(iTestResult) && !iTestResult.getMethod().isAfterClassConfiguration() && !iTestResult.getMethod().isAfterSuiteConfiguration()) {
@@ -183,6 +198,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         	suiteName = System.getProperty("iTests.suiteName");
         }
         LogUtils.log("Configuration Failed: " + configurationName, iTestResult.getThrowable());
+
+        if(enableLogstash && iTestResult.getMethod().isBeforeClassConfiguration()){
+            initLogstash2(iTestResult);
+        }
+
         ZipUtils.unzipArchive(testMethodName, suiteName);
 
         if (enableLogstash && isAfter(iTestResult) && !iTestResult.getMethod().isAfterClassConfiguration() && !iTestResult.getMethod().isAfterSuiteConfiguration()) {
@@ -212,6 +232,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         	testName = testMethodName;
         }
         LogUtils.log("Configuration Skipped: " + configurationName, iTestResult.getThrowable());
+
+        if(enableLogstash && iTestResult.getMethod().isBeforeClassConfiguration()){
+            initLogstash2(iTestResult);
+        }
+
         ZipUtils.unzipArchive(testMethodName, suiteName);
 
         if (enableLogstash && isAfter(iTestResult) && !iTestResult.getMethod().isAfterClassConfiguration() && !iTestResult.getMethod().isAfterSuiteConfiguration()) {

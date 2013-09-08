@@ -16,6 +16,10 @@ import java.util.*;
  */
 public class SGTestNgSuiteSplitter implements IMethodInterceptor {
 
+    public SGTestNgSuiteSplitter(){
+        LogUtils.log("constructing SGTestNgSuiteSplitter");
+    }
+
     @Override
     public List<IMethodInstance> intercept(List<IMethodInstance> methods,
                                            ITestContext context) {

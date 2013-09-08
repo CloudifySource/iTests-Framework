@@ -304,6 +304,9 @@ public class WebuiTestUtils{
 					}
 					else {
 						if (browser.equals("IE")) {
+                            if(System.getProperty("webdriver.ie.driver") == null){
+                                System.setProperty("webdriver.ie.driver", SGTestHelper.getSGTestRootDir() + "/src/main/resources/webui/IEDriverServer.exe");
+                            }
 							DesiredCapabilities desired = DesiredCapabilities.internetExplorer();
 							desired.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
 							driver = new InternetExplorerDriver(desired);
