@@ -7,7 +7,7 @@
     <description>Service Grid Test framework for XAP and cloudify</description>
 
     <properties>
-        <build.home>${env.HOME}</build.home>
+        <build.home>D:\gigaspaces-xap-premium-9.7.0-m3-b10483-328</build.home>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gsVersion>9.7.0-SNAPSHOT</gsVersion>
         <cloudifyVersion>2.7.0-SNAPSHOT</cloudifyVersion>
@@ -122,7 +122,7 @@
         <dependency>
             <groupId>com.gigaspaces.quality</groupId>
             <artifactId>webuitf</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.gigaspaces.quality</groupId>
