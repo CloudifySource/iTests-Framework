@@ -198,7 +198,13 @@ public class LogFetcher {
                     .setFrom(currentOffset).setSize(hitsPerSearch).execute().actionGet();
 
             for (SearchHit hit : response.getHits()) {
-                String sourcePath = hit.getSource().get("@source_path").toString();
+                Object sourcePathObject = hit.getSource().get("@source_path");
+
+                if(sourcePathObject == null){
+                    continue;
+                }
+
+                String sourcePath = sourcePathObject.toString();
 
                 int fileNameIndex = sourcePath.lastIndexOf("/") + 1;
                 String fileName = sourcePath.substring(fileNameIndex);
