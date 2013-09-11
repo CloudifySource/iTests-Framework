@@ -14,6 +14,7 @@ import com.j_spaces.core.filters.ReplicationStatistics.OutgoingReplication;
 import com.j_spaces.core.filters.ReplicationStatistics.ReplicationMode;
 import com.j_spaces.kernel.JSpaceUtilities;
 
+import iTests.framework.tools.SGTestHelper;
 import net.jini.core.discovery.LookupLocator;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
@@ -47,11 +48,19 @@ import java.util.concurrent.*;
  * @author Moran Avigdor
  */
 public class AdminUtils {
-	
-	private static final long ADMIN_DEFAULT_TIMEOUT_SECONDS = TimeUnit.MINUTES.toSeconds(15); //default - 15 minutes
+
+    private static final List<ExecutorService> scripts = new ArrayList<ExecutorService>();
+    private static final long ADMIN_DEFAULT_TIMEOUT_SECONDS = TimeUnit.MINUTES.toSeconds(15); //default - 15 minutes
     private static final long START_GRID_COMPONENT_TIMEOUT_MILLISECONDS = TimeUnit.MINUTES.toMillis(5);
     private static final String WORK_DIR_PROP = "com.gs.work";
     private static final String DEPLOY_DIR_PROP = "com.gs.deploy";
+
+    private static final String START_AGENT_COMMAND = "gsa.global.lus=0 gsa.global.gsm=0 gsa.gsc=0";
+    private static final String START_AGENT_AND_LUS_COMMAND = "gsa.global.lus=0 gsa.lus=1 gsa.global.gsm=0 gsa.gsc=0";
+    private static final String START_AGENT_AND_LUS_AND_GSM_AND_ESM_COMMAND = "gsa.global.lus=0 gsa.lus=1 gsa.global.gsm=0 gsa.gsm=1 gsa.esm=1 gsa.gsc=0";
+    private static final String SSH_USERNAME = "tgrid";
+    private static final String SSH_PASSWORD = "tgrid";
+    private static final long SSH_TIMEOUT = 3 *60 * 1000;
 
 	/**
 	 * @return lookup group environment variable value or null if undefined.
@@ -525,6 +534,58 @@ public class AdminUtils {
 				.vmInputArgument("-Xnoagent")
 				.vmInputArgument("-Djava.compiler=NONE")
 				.vmInputArgument("-Xrunjdwp:transport=dt_socket,server=y,address=" + debugPort + ",suspend=" + (suspend ? "y" : "n")));
+    }
+
+    public static void startGSAAndLUSOnHost(final String hostName) {
+        startGridServiceOnHost(hostName, AdminUtils.getTestGroups(), START_AGENT_AND_LUS_COMMAND);
+    }
+
+    public static void startGSAAndLUSAndGSMAndESMOnHost(final String hostName) {
+        startGridServiceOnHost(hostName, AdminUtils.getTestGroups(), START_AGENT_AND_LUS_AND_GSM_AND_ESM_COMMAND);
+    }
+
+    public static void startGSAonHost(final String hostName) {
+        startGridServiceOnHost(hostName, AdminUtils.getTestGroups(), START_AGENT_COMMAND);
+    }
+
+    protected static void startGridServiceOnHost(final String hostName, final String lookupGroup, final String services) {
+        if(hostName == null || hostName.isEmpty()){
+            LogUtils.log("Not starting GSA And LUS - invalid host name");
+            return;
+        }
+
+        LogUtils.log("Starting " + services + " on machine " + hostName);
+        ExecutorService script = Executors.newSingleThreadExecutor();
+        script.submit(new Runnable() {
+            @SuppressWarnings("deprecation")
+            @Override
+            public void run() {
+                SSHUtils.runCommand(hostName, SSH_TIMEOUT, buildCommand(services, lookupGroup) , SSH_USERNAME, SSH_PASSWORD);
+            }
+        });
+        scripts.add(script);
+    }
+
+    private static String buildCommand(String startupCommand, String lookupGroup) {
+        LogUtils.log("Using group " + lookupGroup + " to start services");
+        String setLookupGroupCommand = "LOOKUPGROUPS=" + lookupGroup;
+        String exportLookupGroups = "export LOOKUPGROUPS";
+        String buildPath = getBuildPath();
+        String pathToAgent = "cd " + buildPath + "/bin";
+        String deployAndWorkDir ="";
+        String work, deploy;
+        if((work = System.getProperty("com.gs.work")) != null && (deploy = System.getProperty("com.gs.deploy")) != null){
+            LogUtils.log("Using deploy dir: " + deploy + " and work dir: " + work);
+            String setJavaOptionsCommand = "GSA_JAVA_OPTIONS=\"-Dcom.gs.work=" + work +" -Dcom.gs.deploy=" + deploy + "\"";
+            String exportJavaOptions = "export GSA_JAVA_OPTIONS";
+            deployAndWorkDir = setJavaOptionsCommand + ";" + exportJavaOptions + ";";
+        }
+        return  deployAndWorkDir + setLookupGroupCommand  + ";" + exportLookupGroups + ";" + pathToAgent + ";  ./gs-agent.sh " + startupCommand;
+
+    }
+
+    private static String getBuildPath() {
+        return SGTestHelper.getBuildDir();
     }
 
     public static Admin cloneAdmin(Admin admin) {
