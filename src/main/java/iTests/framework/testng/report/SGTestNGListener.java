@@ -333,7 +333,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         FileObject listendir;
         CustomFileListener listener = new CustomFileListener();
         long TIMEOUT_BETWEEN_FILE_QUERYING = 1000;
-        long LOOP_TIMEOUT_IN_MILLIS = 20 * 1000;
+        long LOOP_TIMEOUT_IN_MILLIS = 10 * 1000;
 
         try {
             FileSystemManager fileSystemManager = VFS.getManager();
