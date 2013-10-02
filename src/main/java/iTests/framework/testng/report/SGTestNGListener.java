@@ -350,6 +350,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         fm.start();
 
         LogUtils.log("waiting to destroy logger");
+        long startTimeMillis = System.currentTimeMillis();
 
         while(true){
 
@@ -367,8 +368,9 @@ public class SGTestNGListener extends TestListenerAdapter {
 
         }
 
+        long endTimeMillis = System.currentTimeMillis();
         LogUtils.log("destroying logstash agent " + logAgentNumber);
-
+        LogUtils.log("waited " + (endTimeMillis - startTimeMillis)/1000 + " seconds");
         fm.stop();
 
         File logstashOutputFile = new File(logstashLogPath);

@@ -187,6 +187,7 @@ public class LogFetcher {
 
         int hitsPerSearch = 200;
         int currentOffset = 0;
+        long startTimeMillis = System.currentTimeMillis();
 
         while (true) {
 
@@ -269,5 +270,9 @@ public class LogFetcher {
             bw.close();
             fw.close();
         }
+
+        long endTimeMillis = System.currentTimeMillis();
+        LogUtils.log("all queries took " + (endTimeMillis - startTimeMillis)/1000 + " seconds");
+
     }
 }
