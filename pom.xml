@@ -13,6 +13,7 @@
         <cloudifyVersion>2.7.0-SNAPSHOT</cloudifyVersion>
         <springVersion>3.1.1.RELEASE</springVersion>
         <hibernateVersion>3.6.10.Final</hibernateVersion>
+        <jcloudsVersion>1.6.0</jcloudsVersion>
     </properties>
 
     <groupId>iTests.framework</groupId>
@@ -54,12 +55,12 @@
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-blobstore</artifactId>
-            <version>1.5.3</version>
+            <version>${jcloudsVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.jclouds.api</groupId>
             <artifactId>s3</artifactId>
-            <version>1.5.3</version>
+            <version>${jcloudsVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.hyperic</groupId>
