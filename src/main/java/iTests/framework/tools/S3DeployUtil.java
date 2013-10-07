@@ -88,13 +88,6 @@ public class S3DeployUtil {
 
         return properties;
     }
-    
-    
-    public static void main(String[] args) {
-
-        uploadLogFile(new File("D:/spring-security.xml"), "444", "suiteNir", "testNir");
-
-    }
 
 
 }
