@@ -19,8 +19,7 @@ import org.jclouds.s3.domain.CannedAccessPolicy;
 
 public class S3DeployUtil {
 
-    protected static final String CREDENTIALS_FOLDER = "D:\\Users\\noak\\workspace\\cloudify_git\\Cloudify-iTests\\src\\main\\resources\\credentials"; //System.getProperty("iTests.credentialsFolder",
-            //SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
+    protected static final String CREDENTIALS_FOLDER =System.getProperty("iTests.credentialsFolder",SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
     protected static final int ITESTS_LOG_EXPIRATION_IN_DAYS = Integer.getInteger("iTests.logExpirationInDays", 10);
     private static final String S3_PROPERTIES = CREDENTIALS_FOLDER + "/s3.properties";
 
@@ -31,7 +30,6 @@ public class S3DeployUtil {
             String user =  props.getProperty("user");
             String key =  props.getProperty("key");
             String target = buildNumber + "/" + suiteName + "/" + testName;
-            //Set<Module> wiring = new HashSet<Module>();
             BlobStoreContext context = ContextBuilder.newBuilder("s3")
                     .credentials(user, key)
                     .buildView(BlobStoreContext.class);
