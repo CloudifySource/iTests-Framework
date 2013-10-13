@@ -94,6 +94,7 @@ public class HtmlMailReporter {
             if (suiteName.equals("DISCONNECT")) mailRecipients = mailProperties.getDisconnectRecipients();
             if (suiteName.equals("CPP_Linux-amd64")) mailRecipients = mailProperties.getCPP_Linux_amd64Recipients();
             if (suiteName.equals("CPP_Linux32")) mailRecipients = mailProperties.getCPP_Linux32();
+            if (suiteName.equals("CLOUDIFY_CLOUDS_EXAMPLES")) mailRecipients = mailProperties.getCloudifyCloudExamplesRecipients();
             if (suiteName.contains("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
 
             System.out.println("sending mail to recipients: " + mailRecipients);
