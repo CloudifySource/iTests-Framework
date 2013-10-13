@@ -1,7 +1,6 @@
 package iTests.framework.testng.report;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 import iTests.framework.testng.report.xml.CustomizedDomDriver;
 import iTests.framework.testng.report.xml.TestsReport;
 
