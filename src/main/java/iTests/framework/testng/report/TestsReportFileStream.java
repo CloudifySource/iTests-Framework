@@ -2,6 +2,7 @@ package iTests.framework.testng.report;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import iTests.framework.testng.report.xml.CustomizedDomDriver;
 import iTests.framework.testng.report.xml.TestsReport;
 
 import java.io.*;
@@ -67,7 +68,7 @@ public class TestsReportFileStream {
 		FileReader fileReader = null;
 		try {
 			fileReader = new FileReader(file);
-			XStream xStream = new XStream(new DomDriver());
+			XStream xStream = new XStream(new CustomizedDomDriver());
 			Object obj = xStream.fromXML(fileReader);
 			TestsReport testsReport = (TestsReport)obj;
 			return testsReport;
