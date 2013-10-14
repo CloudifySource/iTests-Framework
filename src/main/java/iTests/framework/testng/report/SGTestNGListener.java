@@ -112,7 +112,7 @@ public class SGTestNGListener extends TestListenerAdapter {
 
         String pathToLogstash = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/logstash";
         confFilePath = pathToLogstash + "/logstash-shipper-client.conf";
-        backupFilePath = pathToLogstash + "/logstash-shipper-client-" + testName + ".conf";
+        backupFilePath = pathToLogstash + "/logstash-shipper-client-" + testName.substring(0, testName.length()-2) + ".conf";
 
         if(process == null){
 
