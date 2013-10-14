@@ -17,6 +17,7 @@ import org.jruby.embed.ScriptingContainer;
 import org.testng.*;
 
 import java.io.*;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 
@@ -36,6 +37,9 @@ public class SGTestNGListener extends TestListenerAdapter {
     private String logstashLogPath;
     private String logstashLogPath2;
     private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
+    protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
+    private static File propsFile = new File(CREDENTIALS_FOLDER + "/logstash/logstash.properties");
+    protected String logstashHost;
 
     public SGTestNGListener(){
         if(enableLogstash){
@@ -56,6 +60,8 @@ public class SGTestNGListener extends TestListenerAdapter {
     }
 
     private void initLogstash2(ITestResult tr) {
+
+        initLogstashHost();
 
         String simpleClassName = tr.getTestClass().getRealClass().getSimpleName();
         String pathToLogstash = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/logstash";
@@ -81,6 +87,7 @@ public class SGTestNGListener extends TestListenerAdapter {
                 IOUtils.replaceTextInFile(backupFilePath2, "<test_name>", simpleClassName);
                 IOUtils.replaceTextInFile(backupFilePath2, "<build_number>", buildNumber);
                 IOUtils.replaceTextInFile(backupFilePath2, "<version>", version);
+                IOUtils.replaceTextInFile(backupFilePath2, "<host>", logstashHost);
 
 
                 String logstashJarPath = DeploymentUtils.getLocalRepository() + "net/logstash/1.1.13/logstash-1.1.13.jar";
@@ -100,6 +107,9 @@ public class SGTestNGListener extends TestListenerAdapter {
     }
 
     private void initLogstash(String testName) {
+
+        initLogstashHost();
+
         String pathToLogstash = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/logstash";
         confFilePath = pathToLogstash + "/logstash-shipper-client.conf";
         backupFilePath = pathToLogstash + "/logstash-shipper-client-" + testName + ".conf";
@@ -116,6 +126,7 @@ public class SGTestNGListener extends TestListenerAdapter {
                 IOUtils.replaceTextInFile(backupFilePath, "<test_name>", testName);
                 IOUtils.replaceTextInFile(backupFilePath, "<build_number>", buildNumber);
                 IOUtils.replaceTextInFile(backupFilePath, "<version>", version);
+                IOUtils.replaceTextInFile(backupFilePath, "<host>", logstashHost);
 
                 String logstashJarPath = DeploymentUtils.getLocalRepository() + "net/logstash/1.1.13/logstash-1.1.13.jar";
                 logstashLogPath = pathToLogstash + "/logstash-" + testName + ".txt";
@@ -408,6 +419,21 @@ public class SGTestNGListener extends TestListenerAdapter {
 //        if(logstashOutputFile.exists()){
 //            FileUtils.deleteQuietly(logstashOutputFile);
 //        }
+    }
+
+    private void initLogstashHost(){
+
+        if(logstashHost != null){
+            return;
+        }
+
+        Properties props;
+        try {
+            props = IOUtils.readPropertiesFromFile(propsFile);
+        } catch (final Exception e) {
+            throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
+        }
+        logstashHost = props.getProperty("logstash_server_host");
     }
 
 }
