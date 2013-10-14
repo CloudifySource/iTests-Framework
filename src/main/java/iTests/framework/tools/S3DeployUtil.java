@@ -19,7 +19,7 @@ import org.jclouds.s3.domain.CannedAccessPolicy;
 
 public class S3DeployUtil {
 
-    protected static final String CREDENTIALS_FOLDER =System.getProperty("iTests.credentialsFolder",SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
+    protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
     protected static final int ITESTS_LOG_EXPIRATION_IN_DAYS = Integer.getInteger("iTests.logExpirationInDays", 10);
     private static final String S3_PROPERTIES = CREDENTIALS_FOLDER + "/s3.properties";
 
