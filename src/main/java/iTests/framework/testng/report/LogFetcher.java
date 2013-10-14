@@ -33,7 +33,8 @@ public class LogFetcher {
     private static final String GIGASPACES_QUALITY_S3 = "http://gigaspaces-quality.s3.amazonaws.com/";
     boolean isCloudEnabled = Boolean.parseBoolean(System.getProperty("iTests.cloud.enabled", "false"));
     private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
-    private static File propsFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash/logstash.properties");
+    protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
+    private static File propsFile = new File(CREDENTIALS_FOLDER + "/logstash/logstash.properties");
     private String suiteName;
 
     public LogFetcher() {
@@ -158,7 +159,11 @@ public class LogFetcher {
 
             testFolder.mkdir();
             LogUtils.log("(fetch logs) created test folder in " + testFolder.getAbsolutePath());
+
+            LogUtils.log("querying and creating logs the class " + className);
             createLogs(className, buildNumber, testFolder);
+
+            LogUtils.log("querying and creating logs the test " + testName);
             createLogs(testName, buildNumber, testFolder);
 
         } catch (Exception e) {
@@ -171,12 +176,14 @@ public class LogFetcher {
         return testFolder;
     }
 
-    private static void createLogs(String tagToSearch, String buildNumber, File testFolder) throws Exception {
+    private static void createLogs(String tagToSearch, String buildNumber, File testFolder) throws IOException {
 
         Set<String> fileNames = new HashSet<String>();
 
         Properties props;
         try {
+            LogUtils.log("SGTEST ROOT DIR IS - " + SGTestHelper.getSGTestRootDir());
+
             props = IOUtils.readPropertiesFromFile(propsFile);
         } catch (final Exception e) {
             throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
@@ -194,26 +201,33 @@ public class LogFetcher {
             String query = "@tags:\"" + tagToSearch + "\" AND @tags:\"" + buildNumber + "\"";
             LogUtils.log("query: " + query);
 
-            SearchResponse response = client.prepareSearch()
-                    .setQuery(QueryBuilders.queryString(query))
-                    .setFrom(currentOffset).setSize(hitsPerSearch).execute().actionGet();
+            try {
+                SearchResponse response = client.prepareSearch()
+                        .setQuery(QueryBuilders.queryString(query))
+                        .setFrom(currentOffset).setSize(hitsPerSearch).execute().actionGet();
 
-            for (SearchHit hit : response.getHits()) {
-                Object sourcePathObject = hit.getSource().get("@source_path");
+                for (SearchHit hit : response.getHits()) {
+                    Object sourcePathObject = hit.getSource().get("@source_path");
 
-                if(sourcePathObject == null){
-                    continue;
+                    if(sourcePathObject == null){
+                        continue;
+                    }
+
+                    String sourcePath = sourcePathObject.toString();
+
+                    int fileNameIndex = sourcePath.lastIndexOf("/") + 1;
+                    String fileName = sourcePath.substring(fileNameIndex);
+                    fileNames.add(fileName);
+                }
+                //Break condition: No hits are returned
+                if (response.hits().hits().length == 0) {
+                    break;
                 }
 
-                String sourcePath = sourcePathObject.toString();
+            } catch(Exception e){
 
-                int fileNameIndex = sourcePath.lastIndexOf("/") + 1;
-                String fileName = sourcePath.substring(fileNameIndex);
-                fileNames.add(fileName);
-            }
-            //Break condition: No hits are returned
-            if (response.hits().hits().length == 0) {
-                break;
+                LogUtils.log("a problem occurred while querying " + query);
+                e.printStackTrace();
             }
 
             currentOffset += hitsPerSearch;
@@ -241,26 +255,33 @@ public class LogFetcher {
 
                 LogUtils.log("retrieving " + currentOffset + " to " + (currentOffset+hitsPerSearch));
 
-                SearchResponse resp = client.prepareSearch()
-                        .setQuery(QueryBuilders.queryString("@tags:\"" + tagToSearch + "\" AND @tags:\"" + buildNumber + "\" AND @source_path:\"" + fileName + "\""))
-                        .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("@timestamp").order(SortOrder.ASC)).execute().actionGet();
 
-                LogUtils.log("size: " + resp.getHits().getTotalHits());
-                LogUtils.log("iteration size: " + resp.hits().hits().length);
+                try{
 
-                String message;
+                    SearchResponse resp = client.prepareSearch()
+                            .setQuery(QueryBuilders.queryString("@tags:\"" + tagToSearch + "\" AND @tags:\"" + buildNumber + "\" AND @source_path:\"" + fileName + "\""))
+                            .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("@timestamp").order(SortOrder.ASC)).execute().actionGet();
 
-                for (SearchHit hit : resp.getHits()) {
+                    LogUtils.log("size: " + resp.getHits().getTotalHits());
+                    LogUtils.log("iteration size: " + resp.hits().hits().length);
 
-                    message = hit.getSource().get("@message").toString();
+                    String message;
 
-                    bw.write(message + "\n");
-                    index++;
-                }
+                    for (SearchHit hit : resp.getHits()) {
 
-                //Break condition: No hits are returned
-                if (resp.hits().hits().length == 0) {
-                    break;
+                        message = hit.getSource().get("@message").toString();
+
+                        bw.write(message + "\n");
+                        index++;
+                    }
+
+                    //Break condition: No hits are returned
+                    if (resp.hits().hits().length == 0) {
+                        break;
+                    }
+                } catch(Exception e){
+                    LogUtils.log("a problem occurred while querying");
+                    e.printStackTrace();
                 }
 
                 currentOffset += hitsPerSearch;
