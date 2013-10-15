@@ -188,8 +188,13 @@ public class LogFetcher {
         } catch (final Exception e) {
             throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
         }
+
         String logstashServerHost = props.getProperty("logstash_server_host");
-        int logstashServerPort = Integer.parseInt(props.getProperty("logstash_server_port"));
+        LogUtils.log("logstash server host is: " + logstashServerHost);
+        
+        int logstashServerPort = Integer.parseInt(props.getProperty("logstash_server_port", "9300"));
+        LogUtils.log("logstash server port is: " + logstashServerPort);
+
         Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(logstashServerHost, logstashServerPort));
 
         int hitsPerSearch = 200;
@@ -226,8 +231,7 @@ public class LogFetcher {
 
             } catch(Exception e){
 
-                LogUtils.log("a problem occurred while querying " + query);
-                e.printStackTrace();
+                LogUtils.log("a problem occurred while querying " + query, e);
                 break;
             }
 
@@ -281,8 +285,7 @@ public class LogFetcher {
                         break;
                     }
                 } catch(Exception e){
-                    LogUtils.log("a problem occurred while querying");
-                    e.printStackTrace();
+                    LogUtils.log("a problem occurred while querying", e);
                     break;
                 }
 
