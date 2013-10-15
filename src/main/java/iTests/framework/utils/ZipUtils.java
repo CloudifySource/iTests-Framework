@@ -13,7 +13,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtils {
-	
+
     public static void unzipArchive(String testName, String suiteName) {
         File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/../");
         File testFolder = null;
@@ -24,7 +24,7 @@ public class ZipUtils {
         for (int n = 0; n < children.length; n++) {
             File file = children[n];
             if (file.getName().contains(".zip")) {
-            	LogUtils.log("unzipping file [ " + file.getName() + " ]");
+                LogUtils.log("unzipping file [ " + file.getName() + " ]");
                 unzipArchive(file, testFolder.getAbsoluteFile());
                 file.delete();
             }

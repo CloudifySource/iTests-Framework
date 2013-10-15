@@ -6,7 +6,12 @@ public class TestNGUtils {
 	
 	public static String constructTestMethodName(ITestResult iTestResult) {
 		String parameters = extractParameters(iTestResult);
-        return iTestResult.getTestClass().getName() + "." + iTestResult.getMethod().getMethodName() + "(" + parameters + ")";
+        if(ScriptUtils.isWindows()){
+            return iTestResult.getTestClass().getRealClass().getSimpleName() + "." + iTestResult.getMethod().getMethodName() + "(" + parameters + ")";
+        }
+        else{
+            return iTestResult.getTestClass().getName() + "." + iTestResult.getMethod().getMethodName() + "(" + parameters + ")";
+        }
 	}
 	
 	/**

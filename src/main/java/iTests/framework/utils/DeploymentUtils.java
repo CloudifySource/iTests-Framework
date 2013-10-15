@@ -65,17 +65,12 @@ public class DeploymentUtils {
     }
 
     public static File getProcessingUnit(String app, String pu) {
-
-        if (SGTestHelper.isXap()) {
-            String s = System.getProperty("file.separator");
-            String pathToJar = app + s + pu + s + getSGTestVersion() + s;
-            if (app.equals(pu)) {
-                pathToJar = pu + s + getSGTestVersion() + s;
-            }
-            return new File(getAppsPath(s) + pathToJar + pu + "-" + getSGTestVersion() + ".jar");
-        } else {
-            return new File("src/main/resources/apps/" + app + "/" + pu + "/target/" + pu);
+        String s = System.getProperty("file.separator");
+        String pathToJar = app + s + pu + s + getSGTestVersion() + s;
+        if (app.equals(pu)) {
+            pathToJar = pu + s + getSGTestVersion() + s;
         }
+        return new File(getAppsPath(s) + pathToJar + pu + "-" + getSGTestVersion() + ".jar");
     }
 
     public static File getArchive(String pu) {
@@ -122,12 +117,20 @@ public class DeploymentUtils {
     }
 
     public static String getAppsPath(String s) {
-        return getLocalRepository() + "repository" + s + "com" + s + "gigaspaces" + s + "quality" + s + "sgtest" + s + "apps" + s;
+        String localRepoProp = System.getProperty("maven.repo.local");
+        if(localRepoProp != null)
+            return getLocalRepository() + "com" + s + "gigaspaces" + s + "quality" + s + "sgtest" + s + "apps" + s;
+        else
+            return getLocalRepository() + "repository" + s + "com" + s + "gigaspaces" + s + "quality" + s + "sgtest" + s + "apps" + s;
 
     }
 
     public static String getQualityItestsPath(String s) {
-        return getLocalRepository() + "repository" + s + "org" + s + "cloudifysource" + s + "quality" + s + "iTests" + s;
+        String localRepoProp = System.getProperty("maven.repo.local");
+        if(localRepoProp != null)
+            return getLocalRepository() + "org" + s + "cloudifysource" + s + "quality" + s + "iTests" + s;
+        else
+            return getLocalRepository() + "repository" + s + "org" + s + "cloudifysource" + s + "quality" + s + "iTests" + s;
     }
 
     private static void copyLibs(File source, File target) throws IOException {
@@ -171,7 +174,11 @@ public class DeploymentUtils {
 
     public static String getLocalRepository() {
         String s = System.getProperty("file.separator");
-         return System.getProperty("user.home") + s + ".m2" + s;
+        String localRepoProp = System.getProperty("maven.repo.local");
+        System.out.println("maven.repo.local="+localRepoProp);
+        if(localRepoProp != null)
+            return localRepoProp  + s;
+        return System.getProperty("user.home") + s + ".m2" + s;
     }
 
     public static String getProcessingUnitName(String pu) {

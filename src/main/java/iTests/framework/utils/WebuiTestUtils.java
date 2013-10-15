@@ -53,7 +53,9 @@ public class WebuiTestUtils{
 	private final static String baseUrlApache = "http://localhost:" + System.getenv("apache.port")  + "/gs-webui/";
 	private final static String apachelb = "../tools/apache/apache-lb-agent -apache " + '"' + System.getenv("apache.home") + '"';
 
-	private final static String baseUrl = "http://localhost:8099/";
+	public final static String LOCALHOST_PREFIX = "http://localhost:";
+	public final static int DEFAULT_PORT = 8099;
+	public final static String baseUrl = LOCALHOST_PREFIX + DEFAULT_PORT;
 	private final static String baseReverseProxyUrl = "http://localhost/reverse-proxy-testing/Gs_webui.html";
 	public final static String originalAlertXml = SGTestHelper.getSGTestRootDir() + "/src/main/resources/webui/alerts/alerts.xml";
 	public final static int FIREFOX = 0;
@@ -80,22 +82,37 @@ public class WebuiTestUtils{
 	private List<Selenium> seleniumBrowsers = new ArrayList<Selenium>();
 	private ChromeDriverService chromeService;
 	
+	private int port;
+	
 	public WebuiTestUtils() throws Exception {
-		startup();
+		startup(true);
 	}
 
-	public WebuiTestUtils(String url) throws Exception {
-		startup(url);
+	
+	public WebuiTestUtils( int port, boolean startWebBrowser ) throws Exception {
+		this.port = port;
+		startup( startWebBrowser );
+	}	
+
+	public WebuiTestUtils( String url ) throws Exception {
+		this( url, true );
+	}	
+	
+	public WebuiTestUtils(String url,boolean startWebBrowser) throws Exception {
+		startup(url, startWebBrowser);
 	}
 
-	private void startup() throws Exception{
-		startup(null);
+	private void startup(boolean startWebBrowser) throws Exception{
+		startup(null, startWebBrowser);
 	}
 
-	private void startup(String url) throws Exception{
+	private void startup(String url, boolean startWebBrowser) throws Exception{
 		beforeSuite();
 		beforeTest();
-		startWebServices(url);
+		startWebServices(url, startWebBrowser);
+		if( !startWebBrowser ){
+			Thread.sleep( 3000 );
+		}
 	}
 
 	public void close() throws Exception{
@@ -192,8 +209,8 @@ public class WebuiTestUtils{
 	 * also opens a browser and connect to the server
 	 * @throws Exception 
 	 */
-	public void startWebServices() throws Exception { 
-		startWebServices(null);
+	public void startWebServices( boolean startWebBrowser ) throws Exception { 
+		startWebServices( null, startWebBrowser );
 
 	}
 
@@ -202,26 +219,28 @@ public class WebuiTestUtils{
 	 * also opens a browser and connect to the server
 	 * @throws Exception
 	 */
-	public void startWebServices(String url) throws Exception {
+	public void startWebServices(String url, boolean startWebBrowser ) throws Exception {
 		if (isStartWebServerFromBatch()) {
 			startWebServer();
 
-            if(url == null){
-
-                String isReverseProxy = System.getProperty("reverse.proxy");
-                url = baseUrl;
-                if(isReverseProxy != null && isReverseProxy.equals("true")){
-                    url = baseReverseProxyUrl;
-                }
-            }
-
-            LogUtils.log("starting web browser with url " + url);
-			startWebBrowser(url);
+			if( startWebBrowser ){
+				if(url == null){
+	                String isReverseProxy = System.getProperty("reverse.proxy");
+	                url = baseUrl;
+	                if(isReverseProxy != null && isReverseProxy.equals("true")){
+	                    url = baseReverseProxyUrl;
+	                }
+				}
+				LogUtils.log("starting web browser with url " + url);
+				startWebBrowser(url);
+			}
 		}
 		else {
 			replaceBalancerTemplate();
 			startLoadBalancerWebServer();
-			startWebBrowser(baseUrlApache);
+			if( startWebBrowser ){
+				startWebBrowser(baseUrlApache);
+			}
 		}
 
 	}
@@ -246,9 +265,12 @@ public class WebuiTestUtils{
 		}
 	}
 
+	
 	public void startWebServer() throws Exception {
-		LogUtils.log("Starting webui server...");
-		scriptWebUI = ScriptUtils.runScriptRelativeToGigaspacesBinDir(scriptName);
+		LogUtils.log( 
+			"Starting webui server on port [" + ( ( port > 0 ) ? port : DEFAULT_PORT ) + "]..." );
+		scriptWebUI = ScriptUtils.runScriptRelativeToGigaspacesBinDir( 
+					scriptName + ( ( port > 0 ) ? " -port " + String.valueOf( port ) : "" ) );
 	}
 
 	public void stopWebServer() throws IOException, InterruptedException {
@@ -282,6 +304,9 @@ public class WebuiTestUtils{
 					}
 					else {
 						if (browser.equals("IE")) {
+                            if(System.getProperty("webdriver.ie.driver") == null){
+                                System.setProperty("webdriver.ie.driver", SGTestHelper.getSGTestRootDir() + "/src/main/resources/webui/IEDriverServer.exe");
+                            }
 							DesiredCapabilities desired = DesiredCapabilities.internetExplorer();
 							desired.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
 							driver = new InternetExplorerDriver(desired);
@@ -311,7 +336,7 @@ public class WebuiTestUtils{
 		return driver;
 	}
 
-	public void startWebBrowser(String uRL) throws InterruptedException {
+	private void startWebBrowser(String uRL) throws InterruptedException {
 		String browser = System.getProperty("selenium.browser");
 		driver = initializeWebDriver();
 		if (driver != null) {
@@ -329,9 +354,20 @@ public class WebuiTestUtils{
 		}
 	}
 
+	public void openBrowser(String url) throws InterruptedException {
+		if( selenium != null ) {
+			selenium.open(url);
+			Thread.sleep(3000);
+		}
+		else {
+			Assert.fail("Failed to open Browser with url [" + url + "]");
+		}
+	}
+	
+	
 	private void waitForServerConnection(WebDriver driver) throws InterruptedException {
 		int seconds = 0;
-		while (seconds < 30) {
+		while (seconds < 40) {
 			try {
 				driver.findElement(By.xpath(WebConstants.Xpath.loginButton));
 				LogUtils.log("Web server connection established");

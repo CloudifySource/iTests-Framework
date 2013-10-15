@@ -22,6 +22,7 @@ public class MailReporterProperties {
     final static String CPP_Linux_amd64 = "cppLinuxAmd64";
     final static String CPP_Linux32 = "cppLinux32";
     final static String CLOUDIFY = "cloudify";
+    final static String CLOUDIFY_CLOUD_EXAMPLES = "cloudifyCloudsExamples";
     
     private final Properties props;
 
@@ -134,6 +135,16 @@ public class MailReporterProperties {
     public List<String> getCloudifyRecipients() {
         List<String> _recipients = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(props.getProperty(CLOUDIFY), ",");
+        while(st.hasMoreTokens() == true){
+            _recipients.add(st.nextToken());
+        }
+
+        return _recipients;
+    }
+
+    public List<String> getCloudifyCloudExamplesRecipients() {
+        List<String> _recipients = new ArrayList<String>();
+        StringTokenizer st = new StringTokenizer(props.getProperty(CLOUDIFY_CLOUD_EXAMPLES), ",");
         while(st.hasMoreTokens() == true){
             _recipients.add(st.nextToken());
         }

@@ -16,6 +16,10 @@ import java.util.*;
  */
 public class SGTestNgSuiteSplitter implements IMethodInterceptor {
 
+    public SGTestNgSuiteSplitter(){
+        LogUtils.log("constructing SGTestNgSuiteSplitter");
+    }
+
     @Override
     public List<IMethodInstance> intercept(List<IMethodInstance> methods,
                                            ITestContext context) {
@@ -52,7 +56,7 @@ public class SGTestNgSuiteSplitter implements IMethodInterceptor {
             if (context.getExcludedMethods().contains(methodInstance.getMethod())){
                 continue; //excluded method
             }
-            if (!doRunMethodOnVM(methodInstance.getMethod().getTestClass().getRealClass(), methodInstance)) {
+            if (!doRunMethod(methodInstance.getMethod().getTestClass().getRealClass(), methodInstance, context)) {
                 continue;
             }
             ITestClass methodTestClass = methodInstance.getMethod().getTestClass();
@@ -104,7 +108,7 @@ public class SGTestNgSuiteSplitter implements IMethodInterceptor {
         return smallestSuiteIndex;
     }
 
-    public boolean doRunMethodOnVM(final Class<?> klass, IMethodInstance methodInstance) {
+    public boolean doRunMethod(final Class<?> klass, IMethodInstance methodInstance, ITestContext context) {
         final List<Method> allMethods = new ArrayList<Method>(Arrays.asList(klass.getDeclaredMethods()));
         for (final Method method : allMethods) {
             if (methodInstance.getMethod().getMethodName().equals(method.getName())) {
@@ -113,7 +117,9 @@ public class SGTestNgSuiteSplitter implements IMethodInterceptor {
                     return true;
                 }
                 for (Annotation anno : annotations) {
-                    if (addTestAccordingVM(anno)) return true;
+                    if (addTestAccordingVM(anno)
+                    && addTestAccordingInternetProtocol(anno, context))
+                    return true;
                 }
             }
         }
@@ -127,6 +133,19 @@ public class SGTestNgSuiteSplitter implements IMethodInterceptor {
                         (vm.compareTo(TestConfiguration.VM.ALL) == 0)) {
                     return true;
                 }
+            }
+        }
+        return false;
+    }
+
+    private boolean addTestAccordingInternetProtocol(Annotation anno, ITestContext context) {
+        if (anno instanceof TestConfiguration) {
+            TestConfiguration.PROTOCOL testInternetProtocol = ((TestConfiguration) anno).internetProtocol();
+            TestConfiguration.PROTOCOL suiteInternetProtocol = getSuiteInternetProtocol(context);
+            if(suiteInternetProtocol.equals(TestConfiguration.PROTOCOL.ALL))
+                return true;
+            if ((testInternetProtocol.compareTo(suiteInternetProtocol) == 0)){
+                return true;
             }
         }
         return false;
@@ -154,6 +173,17 @@ public class SGTestNgSuiteSplitter implements IMethodInterceptor {
             } else {
                 return TestConfiguration.VM.MAC;
             }
+        }
+    }
+
+    public TestConfiguration.PROTOCOL getSuiteInternetProtocol(ITestContext context) {
+        if(context.getSuite().getName().toLowerCase().contains("ipv6"))
+            return TestConfiguration.PROTOCOL.IPv6_Only;
+        else{
+            if(context.getSuite().getName().toLowerCase().contains("ipv4"))
+                return TestConfiguration.PROTOCOL.IPv4_Only;
+            else
+                return TestConfiguration.PROTOCOL.ALL;
         }
     }
 }

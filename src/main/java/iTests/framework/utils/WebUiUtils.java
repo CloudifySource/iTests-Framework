@@ -273,10 +273,28 @@ public class WebUiUtils {
 		}
 	}
 	
-	public static boolean isInRangeOfNumber(double number, double numberToCompareTo, double percent) {
-		boolean upperLimit = (number <= (numberToCompareTo + numberToCompareTo * percent / 100));
-		boolean lowerLimit = (number >= (numberToCompareTo - numberToCompareTo * percent / 100));
-		return (lowerLimit && upperLimit);
+	
+	/*public static void main( String[] args ){
 		
+		double number = 8; 
+		double numberToCompareTo = 6; 
+		double percent = 30;
+		
+		boolean inRangeOfNumber = isInRangeOfNumber( number, numberToCompareTo, percent);
+		System.out.println( ">>> inRangeOfNumber=" + inRangeOfNumber );
+	}
+	*/
+	
+	public static boolean isInRangeOfNumber(double number, double numberToCompareTo, double percent) {
+		
+		if( number == numberToCompareTo ){
+			return true;
+		}
+		//get max value
+		double max = Math.max( numberToCompareTo, number );
+		//get min value
+		double min = Math.min( numberToCompareTo, number );
+		//check if min value is more than ( max - range )  
+		return min >= max*percent/100;
 	}	
 }

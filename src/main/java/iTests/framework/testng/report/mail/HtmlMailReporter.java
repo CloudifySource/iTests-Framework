@@ -15,6 +15,7 @@ import java.util.StringTokenizer;
 
 public class HtmlMailReporter {
 
+    boolean isCloudEnabled = Boolean.parseBoolean(System.getProperty("iTests.cloud.enabled", "false"));
     protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
 
@@ -54,18 +55,26 @@ public class HtmlMailReporter {
 
         System.out.println("project name: " + extProperties.getProperty("suiteType"));
         if(extProperties.getProperty("suiteType").contains("XAP")){
-            sb.append("<h1>SGTest XAP Results </h1></br></br></br>").append("\n");
+            sb.append("<h1>SGTest XAP Results </h1></br>").append("\n");
             type = "iTests-XAP";
         }
         else{
-            sb.append("<h1>Cloudify-iTests Results </h1></br></br></br>").append("\n");
+            sb.append("<h1>Cloudify-iTests Results </h1></br>").append("\n");
             type = "iTests-Cloudify";
         }
+        sb.append("<h2> Summary: " +
+                "<font color = \"blue\">" + summaryReport.getTotalTestsRun() +"</font>|" +
+                "<font color = \"red\">" + summaryReport.getFailed() +"</font>|" +
+                "<font color = \"green\">" + summaryReport.getSuccess() +"</font>|" +
+                "<font color = \"orange\">" + summaryReport.getSkipped() +"</font>|" +
+                "<font color = \"coral\">" + summaryReport.getSuspected() +"</font>|" +
+                "</h2>");
 
         sb.append("<h2>Suite Name:  " + summaryReport.getSuiteName() + " </h2></br>").append("\n");
         sb.append("<h4>Duration:  " + WikiUtils.formatDuration(summaryReport.getDuration()) + " </h4></br>").append("\n");
         sb.append("<h4>Full Suite Report:  " + link + " </h4></br>").append("\n");
-        if(buildLogUrl != null)
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22 buildLogUrl " + buildLogUrl);
+        if(buildLogUrl != null &&  !buildLogUrl.equals(""))
             sb.append("<h4>Full build log:  <a href=" + getFullBuildLog(buildLogUrl) + ">" + getFullBuildLog(buildLogUrl) + "</a> </h4></br>").append("\n");
         sb.append("<h4 style=\"color:blue\">Total run:  " + summaryReport.getTotalTestsRun() + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:red\">Failed Tests:  " + summaryReport.getFailed() + " </h4></br>").append("\n");
@@ -85,6 +94,7 @@ public class HtmlMailReporter {
             if (suiteName.equals("DISCONNECT")) mailRecipients = mailProperties.getDisconnectRecipients();
             if (suiteName.equals("CPP_Linux-amd64")) mailRecipients = mailProperties.getCPP_Linux_amd64Recipients();
             if (suiteName.equals("CPP_Linux32")) mailRecipients = mailProperties.getCPP_Linux32();
+            if (suiteName.equals("CLOUDIFY_CLOUDS_EXAMPLES")) mailRecipients = mailProperties.getCloudifyCloudExamplesRecipients();
             if (suiteName.contains("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
 
             System.out.println("sending mail to recipients: " + mailRecipients);
@@ -104,9 +114,17 @@ public class HtmlMailReporter {
         else
             buildNumberForDB = buildNumber;
 
-        DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumberForDB, majorVersion, minorVersion,
-				summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
-				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), 0/*orphans*/, wikiPageUrl, "", type);
+        if(!isCloudEnabled) {
+            try {
+                DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumberForDB, majorVersion, minorVersion,
+                        summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
+                        summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), 0/*orphans*/, wikiPageUrl, "", type);
+            }
+            catch (Exception e){
+                System.out.println("Failed to write to DB with DashboardDBReporter");
+            }
+        }
+
     }
 
     static String getFullBuildLog(String buildLog) {
