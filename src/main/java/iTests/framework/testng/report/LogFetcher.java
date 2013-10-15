@@ -191,7 +191,7 @@ public class LogFetcher {
 
         String logstashServerHost = props.getProperty("logstash_server_host");
         LogUtils.log("logstash server host is: " + logstashServerHost);
-        
+
         int logstashServerPort = Integer.parseInt(props.getProperty("logstash_server_port", "9300"));
         LogUtils.log("logstash server port is: " + logstashServerPort);
 
