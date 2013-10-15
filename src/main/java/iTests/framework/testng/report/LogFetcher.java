@@ -228,6 +228,7 @@ public class LogFetcher {
 
                 LogUtils.log("a problem occurred while querying " + query);
                 e.printStackTrace();
+                break;
             }
 
             currentOffset += hitsPerSearch;
@@ -282,6 +283,7 @@ public class LogFetcher {
                 } catch(Exception e){
                     LogUtils.log("a problem occurred while querying");
                     e.printStackTrace();
+                    break;
                 }
 
                 currentOffset += hitsPerSearch;
