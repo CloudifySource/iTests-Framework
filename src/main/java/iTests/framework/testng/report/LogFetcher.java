@@ -63,13 +63,11 @@ public class LogFetcher {
                 e.printStackTrace();
             }
 
-            if(!isCloudEnabled){
-                LogUtils.log("uploading to s3 from " + testFolder);
-                S3DeployUtil.uploadLogFile(testFolder, buildNumber, suiteName, testName);
-            }
+            LogUtils.log("uploading to s3 from " + testFolder);
+            S3DeployUtil.uploadLogFile(testFolder, buildNumber, suiteName, testName);
         }
 
-        if(isCloudEnabled){
+        if(isCloudEnabled && !enableLogstash){
             S3DeployUtil.uploadLogFile(testDir, buildNumber, suiteName, testName);
         }
 
