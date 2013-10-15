@@ -2,7 +2,6 @@ package iTests.framework.testng.report;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import iTests.framework.testng.report.xml.CustomizedDomDriver;
 import iTests.framework.testng.report.xml.TestsReport;
 
 import java.io.*;
@@ -21,7 +20,7 @@ public class TestsReportFileStream {
 		try {
 			fileWriter = new FileWriter(file);
 
-			XStream xStream = new XStream(new CustomizedDomDriver());
+			XStream xStream = new XStream();
 			xStream.toXML(testsReport, fileWriter);
 
 		} catch (Exception e) {
