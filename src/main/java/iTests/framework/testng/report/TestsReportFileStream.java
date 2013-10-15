@@ -20,7 +20,7 @@ public class TestsReportFileStream {
 		try {
 			fileWriter = new FileWriter(file);
 
-			XStream xStream = new XStream();
+			XStream xStream = new XStream(new CustomizedDomDriver());
 			xStream.toXML(testsReport, fileWriter);
 
 		} catch (Exception e) {
