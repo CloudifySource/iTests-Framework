@@ -117,28 +117,30 @@ public class LogFetcher {
     }
 
     private String getFileUrl(String path) {
+        LogUtils.log("file path is: " + path);
         int index = path.indexOf("build_");
         String ans;
         if(index == -1){
-            String[] split = path.split("cloudify-itests");
+            String[] split = path.split("itests-service");
             ans = getUrl() + System.getProperty("iTests.buildNumber") + split[1];
             LogUtils.log("index of build_ is: " + index + " ,and current url is " + ans);
             index = ans.indexOf(System.getProperty("iTests.buildNumber"));
-            LogUtils.log("the index aithin ans of the build number is: " + index);
+            LogUtils.log("the index within ans of the build number is: " + index);
         }
         else{
             ans = getUrl() + path.substring(index);
         }
 
         if(enableLogstash){
-            //TODO adapt to sgtest service - different url
-            StringBuilder finalUrl = new StringBuilder(ans);
-            int suiteStartIndex = ans.indexOf("/", index) + 1;
-            finalUrl.insert(suiteStartIndex, suiteName + "/");
-
-            LogUtils.log("current url is " + ans);
             ans = ans.replace("../", "");
             LogUtils.log("current url (after removing ../) is " + ans);
+            StringBuilder finalUrl = new StringBuilder(ans);
+            int suiteStartIndex = ans.indexOf("/", index) + 1;
+
+            LogUtils.log("inserting suiteName at: " + suiteStartIndex);
+            finalUrl.insert(suiteStartIndex, suiteName + "/");
+            LogUtils.log("final url is " + finalUrl);
+
             ans = finalUrl.toString();
         }
 
