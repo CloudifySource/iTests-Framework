@@ -121,7 +121,7 @@ public class LogFetcher {
         int index = path.indexOf("build_");
         String ans;
         if(index == -1){
-            String[] split = path.split("itests-service");
+            String[] split = path.split("cloudify-itests");
             ans = getUrl() + System.getProperty("iTests.buildNumber") + split[1];
             LogUtils.log("index of build_ is: " + index + " ,and current url is " + ans);
             index = ans.indexOf(System.getProperty("iTests.buildNumber"));
