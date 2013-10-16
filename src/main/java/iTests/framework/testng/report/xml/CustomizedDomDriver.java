@@ -32,7 +32,7 @@ public class CustomizedDomDriver extends DomDriver{
 
             protected void writeText(QuickWriter writer, String text){
                 if (cdata){
-                    writer.write("<[CDATA[");
+                    writer.write("<![CDATA[");
                     writer.write(text);
                     writer.write("]]>");
                 }
