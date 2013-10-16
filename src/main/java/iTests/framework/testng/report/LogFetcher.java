@@ -120,8 +120,11 @@ public class LogFetcher {
         int index = path.indexOf("build_");
         String ans;
         if(index == -1){
-            String[] split = path.split("itests-service");
+            String[] split = path.split("cloudify-itests");
             ans = getUrl() + System.getProperty("iTests.buildNumber") + split[1];
+            LogUtils.log("index of build_ is: " + index + " ,and current url is " + ans);
+            index = ans.indexOf(System.getProperty("iTests.buildNumber"));
+            LogUtils.log("the index aithin ans of the build number is: " + index);
         }
         else{
             ans = getUrl() + path.substring(index);
@@ -132,6 +135,10 @@ public class LogFetcher {
             StringBuilder finalUrl = new StringBuilder(ans);
             int suiteStartIndex = ans.indexOf("/", index) + 1;
             finalUrl.insert(suiteStartIndex, suiteName + "/");
+
+            LogUtils.log("current url is " + ans);
+            ans = ans.replace("../", "");
+            LogUtils.log("current url (after removing ../) is " + ans);
             ans = finalUrl.toString();
         }
 
@@ -297,6 +304,10 @@ public class LogFetcher {
 
         long endTimeMillis = System.currentTimeMillis();
         LogUtils.log("all queries took " + (endTimeMillis - startTimeMillis)/1000 + " seconds");
+
+    }
+
+    public static void main(String[] args) {
 
     }
 }
