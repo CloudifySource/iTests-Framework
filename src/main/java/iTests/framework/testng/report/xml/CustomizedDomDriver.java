@@ -33,6 +33,7 @@ public class CustomizedDomDriver extends DomDriver{
             protected void writeText(QuickWriter writer, String text){
                 if (cdata){
                     writer.write("<![CDATA[");
+                    text = text.replaceAll("[\\x00-\\x1F]", "");
                     writer.write(text);
                     writer.write("]]>");
                 }
