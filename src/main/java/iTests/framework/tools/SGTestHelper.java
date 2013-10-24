@@ -1,7 +1,6 @@
 package iTests.framework.tools;
 
 import com.j_spaces.kernel.PlatformVersion;
-import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -36,7 +35,6 @@ public class SGTestHelper {
             }
         }
 
-        LogUtils.log(System.getProperties().toString());
 		if (ScriptUtils.isWindows()) {
 			isDevMode = !System.getenv("USERNAME").equals("ca");
 		}
