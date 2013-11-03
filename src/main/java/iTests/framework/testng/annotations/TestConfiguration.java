@@ -23,4 +23,15 @@ public @interface TestConfiguration {
 
     PROTOCOL internetProtocol() default iTests.framework.testng.annotations.TestConfiguration.PROTOCOL.ALL;
 
+    public enum CLOUD {
+        EC2,
+        HP,
+        BYON,
+        RACKSPACE,
+        ALL
+    }
+
+    CLOUD[] clouds() default iTests.framework.testng.annotations.TestConfiguration.CLOUD.ALL;
+
+
 }

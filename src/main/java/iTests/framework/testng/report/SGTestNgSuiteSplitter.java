@@ -118,12 +118,49 @@ public class SGTestNgSuiteSplitter implements IMethodInterceptor {
                 }
                 for (Annotation anno : annotations) {
                     if (addTestAccordingVM(anno)
-                    && addTestAccordingInternetProtocol(anno, context))
+                    && addTestAccordingInternetProtocol(anno, context)
+                    && addTestAccordingCloud(anno, context))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean addTestAccordingCloud(Annotation anno, ITestContext context) {
+        if (anno instanceof TestConfiguration) {
+            for (TestConfiguration.CLOUD cloud: ((TestConfiguration) anno).clouds()){
+                if (isCloudInSuiteName(context, cloud)){
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    private boolean isCloudInSuiteName(ITestContext context, TestConfiguration.CLOUD cloud) {
+        if (cloud.compareTo(TestConfiguration.CLOUD.ALL) == 0){
+            return true;
+        }
+        else if (cloud.compareTo(TestConfiguration.CLOUD.EC2) == 0
+                && context.getSuite().getName().toLowerCase().contains("ec2")){
+                return true;
+        }
+        else if (cloud.compareTo(TestConfiguration.CLOUD.HP) == 0
+                && context.getSuite().getName().toLowerCase().contains("hp")){
+                return true;
+        }
+        else if (cloud.compareTo(TestConfiguration.CLOUD.BYON) == 0
+                && context.getSuite().getName().toLowerCase().contains("byon")){
+                return true;
+        }
+        else if (cloud.compareTo(TestConfiguration.CLOUD.RACKSPACE) == 0
+                && context.getSuite().getName().toLowerCase().contains("rackspace")){
+                return true;
+        }
+        else {
+            return false;
+        }
     }
 
     private boolean addTestAccordingVM(Annotation anno) {
