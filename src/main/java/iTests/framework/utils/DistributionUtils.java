@@ -61,7 +61,7 @@ public class DistributionUtils {
 
             for (Machine machine : admin.getMachines()) {
                 int nCurrentPrimariesInMachine = 0;
-                ProcessingUnitInstance[] processingUnitInstances = machine.getProcessingUnitInstances();
+                ProcessingUnitInstance[] processingUnitInstances = machine.getProcessingUnitInstances(pu.getName());
                 for (ProcessingUnitInstance puInstance : processingUnitInstances) {
                     puInstance.waitForSpaceInstance();
                     if (puInstance.getSpaceInstance().getMode().equals(SpaceMode.PRIMARY)) {
