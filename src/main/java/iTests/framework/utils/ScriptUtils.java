@@ -3,15 +3,39 @@ package iTests.framework.utils;
 import com.j_spaces.kernel.PlatformVersion;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.LogOutputStream;
+import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.hyperic.sigar.Sigar;
 import org.testng.Assert;
 
-import javax.xml.stream.*;
-import java.io.*;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Scanner;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,13 +54,56 @@ public class ScriptUtils {
         ProcessBuilder pb = new ProcessBuilder(parts);
         LogUtils.log("Executing Command line: " + cmdLine);
         Process process = pb.start();
-        int result = process.waitFor();
-        return result;
+        return process.waitFor();
     }
 
-//	public static void killLinuxProcess(long pid, String hostName) {
-//		SSHUtils.runCommand(hostName, WANemUtils.SSH_TIMEOUT, "kill -9 " + pid , WANemUtils.SSH_USERNAME, WANemUtils.SSH_PASSWORD);
-//	}
+    /**
+     *
+     * @param commandLine The command line to run.
+     * @param timeout Timeout in milliseconds for the command.
+     * @throws TimeoutException In case the timeout expired.
+     */
+    public static void executeCommandLine(final String commandLine, final long timeout) throws TimeoutException {
+
+        Executor executor = new DefaultExecutor();
+        executor.setExitValue(0);
+        ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+        executor.setWatchdog(watchdog);
+        ProcessOutputStream outAndErr = new ProcessOutputStream();
+        try {
+            PumpStreamHandler streamHandler = new PumpStreamHandler(outAndErr);
+            executor.setStreamHandler(streamHandler);
+            LogUtils.log("Executing commandLine : '" + commandLine + "'");
+            executor.execute(CommandLine.parse(commandLine));
+            LogUtils.log("Execution completed successfully. Process output was : " + outAndErr.getOutput());
+        } catch (final Exception e) {
+            if (watchdog.killedProcess()) {
+                throw new TimeoutException("Timed out while executing commandLine : '" + commandLine + "'");
+            }
+            throw new RuntimeException("Failed executing commandLine : '" + commandLine
+                    + ". Process output was : " + outAndErr.getOutput(), e);
+        }
+    }
+
+    /**
+     * Logs process output to the logger.
+     * @author elip
+     *
+     */
+    private static class ProcessOutputStream extends LogOutputStream {
+
+        private List<String> output = new java.util.LinkedList<String>();
+
+        private String getOutput() {
+            return StringUtils.join(output, "\n");
+        }
+
+        @Override
+        protected void processLine(final String line, final int level) {
+            output.add(line);
+            LogUtils.log(line);
+        }
+    }
 
     @SuppressWarnings("deprecation")
     public static String runScriptRelativeToGigaspacesBinDir(String args, long timeout) throws Exception {
