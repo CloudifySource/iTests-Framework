@@ -17,7 +17,7 @@
     </properties>
 
     <groupId>iTests.framework</groupId>
-    <version>1.0.18-SNAPSHOT</version>
+    <version>1.0.19-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
@@ -51,6 +51,11 @@
                     <artifactId>log4j</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>2.0.0.201206130900-r</version>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
