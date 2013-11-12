@@ -15,4 +15,23 @@ public @interface TestConfiguration {
 
     VM[] os() default iTests.framework.testng.annotations.TestConfiguration.VM.ALL;
 
+    public enum PROTOCOL {
+        IPv6_Only,
+        IPv4_Only,
+        ALL
+    }
+
+    PROTOCOL internetProtocol() default iTests.framework.testng.annotations.TestConfiguration.PROTOCOL.ALL;
+
+    public enum CLOUD {
+        EC2,
+        HP,
+        BYON,
+        RACKSPACE,
+        ALL
+    }
+
+    CLOUD[] clouds() default iTests.framework.testng.annotations.TestConfiguration.CLOUD.ALL;
+
+
 }
