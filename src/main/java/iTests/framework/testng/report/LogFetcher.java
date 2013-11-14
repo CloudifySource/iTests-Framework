@@ -210,7 +210,7 @@ public class LogFetcher {
 
         while (true) {
 
-            String query = "@tags:\"" + tagToSearch + "\" AND @tags:\"" + buildNumber + "\"";
+            String query = "tags:\"" + tagToSearch + "\" AND tags:\"" + buildNumber + "\"";
             LogUtils.log("query: " + query);
 
             try {
@@ -219,7 +219,7 @@ public class LogFetcher {
                         .setFrom(currentOffset).setSize(hitsPerSearch).execute().actionGet();
 
                 for (SearchHit hit : response.getHits()) {
-                    Object sourcePathObject = hit.getSource().get("@source_path");
+                    Object sourcePathObject = hit.getSource().get("source_path");
 
                     if(sourcePathObject == null){
                         continue;
@@ -271,8 +271,8 @@ public class LogFetcher {
                 try{
 
                     SearchResponse resp = client.prepareSearch()
-                            .setQuery(QueryBuilders.queryString("@tags:\"" + tagToSearch + "\" AND @tags:\"" + buildNumber + "\" AND @source_path:\"" + fileName + "\""))
-                            .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("@timestamp").order(SortOrder.ASC)).execute().actionGet();
+                            .setQuery(QueryBuilders.queryString("tags:\"" + tagToSearch + "\" AND tags:\"" + buildNumber + "\" AND source_path:\"" + fileName + "\""))
+                            .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("timestamp").order(SortOrder.ASC)).execute().actionGet();
 
                     LogUtils.log("size: " + resp.getHits().getTotalHits());
                     LogUtils.log("iteration size: " + resp.getHits().hits().length);
@@ -281,7 +281,7 @@ public class LogFetcher {
 
                     for (SearchHit hit : resp.getHits()) {
 
-                        message = hit.getSource().get("@message").toString();
+                        message = hit.getSource().get("message").toString();
 
                         bw.write(message + "\n");
                         index++;
