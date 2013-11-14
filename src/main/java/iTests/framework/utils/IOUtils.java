@@ -5,7 +5,15 @@ import com.google.common.io.InputSupplier;
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -179,5 +187,24 @@ public class IOUtils {
         Properties props = new Properties();
         props.load(new FileInputStream(file));
         return props;
+    }
+
+    /**
+     * Creates a directory in the operating system's main temp directory.
+     * @param prefix The prefix of the new temp directory. the suffix will be the current time in millis.
+     * @return The temp directory file object.
+     *
+     * @throws IOException In case some operation failed.
+     */
+    public static File createTempDirectory(final String prefix) throws IOException {
+
+        File tempFile = File.createTempFile(prefix, Long.toString(System.currentTimeMillis()));
+        if (!tempFile.delete()) {
+            throw new IOException("Failed to delete file " + tempFile.getAbsolutePath());
+        }
+        if (!tempFile.mkdir()) {
+            throw new IOException("Could not create temp directory: " + tempFile.getAbsolutePath());
+        }
+        return tempFile;
     }
 }
