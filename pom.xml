@@ -7,7 +7,7 @@
     <description>Service Grid Test framework for XAP and cloudify</description>
 
     <properties>
-        <build.home>${env.HOME}</build.home>
+        <build.home>${env.BUILD_HOME}</build.home>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gsVersion>9.7.0-SNAPSHOT</gsVersion>
         <cloudifyVersion>2.7.0-SNAPSHOT</cloudifyVersion>
