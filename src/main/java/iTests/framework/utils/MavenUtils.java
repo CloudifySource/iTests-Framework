@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static iTests.framework.utils.LogUtils.log;
 import static iTests.framework.utils.ScriptUtils.getBuildPath;
 
 /**
@@ -37,6 +38,7 @@ public class MavenUtils {
 		mavenRepLocation = getBuildPath()+"/../m2Repository";
 		String mavenHome = getBuildPath() + "/tools/maven";
 		File customInstallRepFile  = createCustomInstallMavenRepFile(mavenHome);
+        LogUtils.log("running command " + "cd " + mavenHome + ";" + "./installmavenrepBackup.sh");
 		String scriptOutPut = SSHUtils.runCommand(machine.getHostAddress(), DEFAULT_TEST_TIMEOUT * 2,
                 "cd " + mavenHome + ";" + "./installmavenrepBackup.sh", MavenUtils.username, MavenUtils.password);
 		if (scriptOutPut == null) return false;
@@ -146,5 +148,21 @@ public class MavenUtils {
 		SSHUtils.runCommand(machine.getHostAddress(), 600000, "cd " + platformDirPath + ";rm -rf " + platformDirPath + "/mule",
                 MavenUtils.username, MavenUtils.password);
 	}
+
+    public static void packageMaven(Machine machine, String appPath){
+
+        log("Packaging...");
+        log("running command " + "cd " + appPath + ";" + MavenUtils.mavenPackage +" -Dmaven.repo.local="+mavenRepLocation);
+        SSHUtils.runCommand(machine.getHostAddress(), DEFAULT_TEST_TIMEOUT,
+                "cd " + appPath + ";" + MavenUtils.mavenPackage +" -Dmaven.repo.local="+mavenRepLocation, username , password);
+    }
+
+    public static void deployMaven(Machine machine, String appPath, String group){
+
+        log("deploying...");
+        log("running command " + "cd " + appPath + ";" + MavenUtils.mavenDeploy +" -Dmaven.repo.local="+mavenRepLocation + " -Dgroups=" + group);
+        SSHUtils.runCommand(machine.getHostAddress(), DEFAULT_TEST_TIMEOUT,
+                "cd " + appPath + ";" + MavenUtils.mavenDeploy +" -Dmaven.repo.local="+mavenRepLocation + "-Dgroups=" + group, username , password);
+    }
 
 }

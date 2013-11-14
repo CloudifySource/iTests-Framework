@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class WebUIAjaxHelper {
 
@@ -90,29 +91,34 @@ public class WebUIAjaxHelper {
 		Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
 		return wait.until(visibilityOfElementLocated(by));    
 	}
-	
-	public void waitForElement(TimeUnit timeUnit, int timeout,final By...bys) {
-		
-		FluentWait<By> fluentWait = new FluentWait<By>(bys[0]);
-		fluentWait.pollingEvery(100, TimeUnit.MILLISECONDS);
-		fluentWait.withTimeout(timeout, timeUnit);
-		fluentWait.until(new Predicate<By>() {
-			public boolean apply(By by) {
-				try {
-					WebElement element = driver.findElement(bys[0]);
-					for (int i = 1 ; i < bys.length ; i++) {
-						element = element.findElement(bys[i]); 
-					}
-					return true;
-				} catch (NoSuchElementException ex) {
-					return false;
-				}
-				catch (StaleElementReferenceException ex) {
-					return false;
-				}
-			}
-		});
-	}
+
+    public WebElement waitForElement(TimeUnit timeUnit, int timeout,final By...bys) {
+
+        final AtomicReference<WebElement> atEl = new AtomicReference<WebElement>();
+
+        FluentWait<By> fluentWait = new FluentWait<By>(bys[0]);
+        fluentWait.pollingEvery(100, TimeUnit.MILLISECONDS);
+        fluentWait.withTimeout(timeout, timeUnit);
+        fluentWait.until(new Predicate<By>() {
+            public boolean apply(By by) {
+                try {
+                    WebElement element = driver.findElement(bys[0]);
+                    for (int i = 1 ; i < bys.length ; i++) {
+                        element = element.findElement(bys[i]);
+                    }
+                    atEl.set(element);
+                    return true;
+                } catch (NoSuchElementException ex) {
+                    return false;
+                }
+                catch (StaleElementReferenceException ex) {
+                    return false;
+                }
+            }
+        });
+
+        return atEl.get();
+    }
 	
 	public void waitForElementToDisappear(TimeUnit timeUnit, int timeout,final By...bys) {
 		

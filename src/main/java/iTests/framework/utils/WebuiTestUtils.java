@@ -102,13 +102,23 @@ public class WebuiTestUtils{
 		startup(url, startWebBrowser);
 	}
 
+	public WebuiTestUtils(String url,boolean startWebBrowser, boolean cleanup) throws Exception {
+		startup(url, startWebBrowser, cleanup);
+	}
+
 	private void startup(boolean startWebBrowser) throws Exception{
 		startup(null, startWebBrowser);
 	}
 
 	private void startup(String url, boolean startWebBrowser) throws Exception{
-		beforeSuite();
-		beforeTest();
+		startup(url, startWebBrowser, true);
+	}
+
+	private void startup(String url, boolean startWebBrowser, boolean cleanup) throws Exception{
+		if(cleanup){
+            beforeSuite();
+            beforeTest();
+        }
 		startWebServices(url, startWebBrowser);
 		if( !startWebBrowser ){
 			Thread.sleep( 3000 );
@@ -347,7 +357,9 @@ public class WebuiTestUtils{
 			selenium = new WebDriverBackedSelenium(driver, uRL);
 			seleniumBrowsers.add(selenium);
 			Thread.sleep(3000);
-			waitForServerConnection(driver);
+            if(uRL.contains(":" + DEFAULT_PORT)){
+                waitForServerConnection(driver);
+            }
 		}
 		else {
 			Assert.fail("Failed to launch Browser");
