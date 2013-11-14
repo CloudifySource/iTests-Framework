@@ -90,7 +90,7 @@ public class SGTestNGListener extends TestListenerAdapter {
                 IOUtils.replaceTextInFile(backupFilePath2, "<host>", logstashHost);
 
 
-                String logstashJarPath = DeploymentUtils.getLocalRepository() + "net/logstash/1.1.13/logstash-1.1.13.jar";
+                String logstashJarPath = DeploymentUtils.getLocalRepository() + "net/logstash/1.2.2/logstash-1.2.2.jar";
                 logstashLogPath2 = pathToLogstash + "/logstash-" + simpleClassName + "-2.txt";
                 String cmdLine = "java -jar " + logstashJarPath + " agent -f " + backupFilePath2 + " -l " + logstashLogPath2;
 
@@ -129,7 +129,7 @@ public class SGTestNGListener extends TestListenerAdapter {
                 IOUtils.replaceTextInFile(backupFilePath, "<version>", version);
                 IOUtils.replaceTextInFile(backupFilePath, "<host>", logstashHost);
 
-                String logstashJarPath = DeploymentUtils.getLocalRepository() + "net/logstash/1.1.13/logstash-1.1.13.jar";
+                String logstashJarPath = DeploymentUtils.getLocalRepository() + "net/logstash/1.2.2/logstash-1.2.2.jar";
                 logstashLogPath = pathToLogstash + "/logstash-" + fixedTestName + ".txt";
                 String cmdLine = "java -jar " + logstashJarPath + " agent -f " + backupFilePath + " -l " + logstashLogPath;
 

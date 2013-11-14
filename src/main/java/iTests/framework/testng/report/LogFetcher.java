@@ -232,7 +232,7 @@ public class LogFetcher {
                     fileNames.add(fileName);
                 }
                 //Break condition: No hits are returned
-                if (response.hits().hits().length == 0) {
+                if (response.getHits().hits().length == 0) {
                     break;
                 }
 
@@ -275,7 +275,7 @@ public class LogFetcher {
                             .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("@timestamp").order(SortOrder.ASC)).execute().actionGet();
 
                     LogUtils.log("size: " + resp.getHits().getTotalHits());
-                    LogUtils.log("iteration size: " + resp.hits().hits().length);
+                    LogUtils.log("iteration size: " + resp.getHits().hits().length);
 
                     String message;
 
@@ -288,7 +288,7 @@ public class LogFetcher {
                     }
 
                     //Break condition: No hits are returned
-                    if (resp.hits().hits().length == 0) {
+                    if (resp.getHits().hits().length == 0) {
                         break;
                     }
                 } catch(Exception e){
