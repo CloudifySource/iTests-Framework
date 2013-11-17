@@ -272,7 +272,7 @@ public class LogFetcher {
 
                     SearchResponse resp = client.prepareSearch()
                             .setQuery(QueryBuilders.queryString("tags:\"" + tagToSearch + "\" AND tags:\"" + buildNumber + "\" AND path:\"" + fileName + "\""))
-                            .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("timestamp").order(SortOrder.ASC)).execute().actionGet();
+                            .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("@timestamp").order(SortOrder.ASC)).execute().actionGet();
 
                     LogUtils.log("size: " + resp.getHits().getTotalHits());
                     LogUtils.log("iteration size: " + resp.getHits().hits().length);
