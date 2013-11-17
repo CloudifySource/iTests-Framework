@@ -219,7 +219,7 @@ public class LogFetcher {
                         .setFrom(currentOffset).setSize(hitsPerSearch).execute().actionGet();
 
                 for (SearchHit hit : response.getHits()) {
-                    Object sourcePathObject = hit.getSource().get("source_path");
+                    Object sourcePathObject = hit.getSource().get("path");
 
                     if(sourcePathObject == null){
                         continue;
@@ -271,7 +271,7 @@ public class LogFetcher {
                 try{
 
                     SearchResponse resp = client.prepareSearch()
-                            .setQuery(QueryBuilders.queryString("tags:\"" + tagToSearch + "\" AND tags:\"" + buildNumber + "\" AND source_path:\"" + fileName + "\""))
+                            .setQuery(QueryBuilders.queryString("tags:\"" + tagToSearch + "\" AND tags:\"" + buildNumber + "\" AND path:\"" + fileName + "\""))
                             .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("timestamp").order(SortOrder.ASC)).execute().actionGet();
 
                     LogUtils.log("size: " + resp.getHits().getTotalHits());
@@ -309,7 +309,4 @@ public class LogFetcher {
 
     }
 
-    public static void main(String[] args) {
-
-    }
 }
