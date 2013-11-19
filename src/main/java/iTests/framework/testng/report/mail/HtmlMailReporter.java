@@ -84,18 +84,48 @@ public class HtmlMailReporter {
         sb.append("</html>");
 
         try {
-            mailRecipients = mailProperties.getRecipients();
-            if (suiteName.contains("webui")) mailRecipients = mailProperties.getWebUIRecipients();
-            if (suiteName.equals("ServiceGrid")) mailRecipients = mailProperties.getSGRecipients();
-            if (suiteName.equals("WAN")) mailRecipients = mailProperties.getWanRecipients();
-            if (suiteName.equals("SECURITY")) mailRecipients = mailProperties.getSecurityRecipients();
-            if (suiteName.equals("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
-            if (suiteName.equals("ESM")) mailRecipients = mailProperties.getESMRecipients();
-            if (suiteName.equals("DISCONNECT")) mailRecipients = mailProperties.getDisconnectRecipients();
-            if (suiteName.equals("CPP_Linux-amd64")) mailRecipients = mailProperties.getCPP_Linux_amd64Recipients();
-            if (suiteName.equals("CPP_Linux32")) mailRecipients = mailProperties.getCPP_Linux32();
-            if (suiteName.contains("Clouds_Examples")) mailRecipients = mailProperties.getCloudifyCloudExamplesRecipients();
-            if (suiteName.contains("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
+            if (suiteName.contains("webui")) {
+                mailRecipients = mailProperties.getWebUIRecipients();
+            }else{
+                if (suiteName.equals("ServiceGrid")) {
+                    mailRecipients = mailProperties.getSGRecipients();
+                }else{
+                    if (suiteName.equals("WAN")) {
+                        mailRecipients = mailProperties.getWanRecipients();
+                    }else{
+                        if (suiteName.equals("SECURITY")) {
+                            mailRecipients = mailProperties.getSecurityRecipients();
+                        }else{
+                            if (suiteName.equals("CLOUDIFY")) {
+                                mailRecipients = mailProperties.getCloudifyRecipients();
+                            }else{
+                                if (suiteName.equals("ESM")) {
+                                    mailRecipients = mailProperties.getESMRecipients();
+                                }else{
+                                    if (suiteName.equals("DISCONNECT")) {
+                                        mailRecipients = mailProperties.getDisconnectRecipients();
+                                    }else{
+                                        if (suiteName.equals("CPP_Linux-amd64")) {
+                                            mailRecipients = mailProperties.getCPP_Linux_amd64Recipients();
+                                        }else{
+                                            if (suiteName.equals("CPP_Linux32")) {
+                                                mailRecipients = mailProperties.getCPP_Linux32();
+                                            }else{
+                                                if (suiteName.contains("CLOUDS_EXAMPLES")) {
+                                                    mailRecipients = mailProperties.getCloudifyCloudSExamplesRecipients();
+                                                }else{
+                                                        mailRecipients = mailProperties.getRecipients();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
 
             System.out.println("sending mail to recipients: " + mailRecipients);
 
