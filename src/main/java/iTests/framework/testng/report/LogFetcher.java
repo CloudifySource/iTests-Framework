@@ -216,7 +216,11 @@ public class LogFetcher {
             try {
                 SearchResponse response = client.prepareSearch()
                         .setQuery(QueryBuilders.queryString(query))
-                        .setFrom(currentOffset).setSize(hitsPerSearch).execute().actionGet();
+                        .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("@timestamp").order(SortOrder.ASC)).execute().actionGet();
+
+                LogUtils.log("size: " + response.getHits().getTotalHits());
+                LogUtils.log("iteration size: " + response.getHits().hits().length);
+                String message;
 
                 for (SearchHit hit : response.getHits()) {
                     Object sourcePathObject = hit.getSource().get("path");
@@ -229,7 +233,25 @@ public class LogFetcher {
 
                     int fileNameIndex = sourcePath.lastIndexOf("/") + 1;
                     String fileName = sourcePath.substring(fileNameIndex);
-                    fileNames.add(fileName);
+                    File methodFile = new File(testFolder.getAbsolutePath() + "/" + fileName);
+
+                    if(!fileNames.contains(fileName)){
+                        LogUtils.log("file name found: " + fileName);
+                        fileNames.add(fileName);
+
+                        LogUtils.log("creating file " + methodFile.getAbsolutePath());
+                        methodFile.createNewFile();
+                    }
+
+                    FileWriter fw = new FileWriter(methodFile.getAbsoluteFile());
+                    BufferedWriter bw = new BufferedWriter(fw);
+
+                    message = hit.getSource().get("message").toString();
+                    bw.write(message + "\n");
+
+                    bw.flush();
+                    bw.close();
+                    fw.close();
                 }
                 //Break condition: No hits are returned
                 if (response.getHits().hits().length == 0) {
@@ -246,63 +268,57 @@ public class LogFetcher {
 
         }
 
-        for(String fileName : fileNames){
-            LogUtils.log("file name found: " + fileName);
-        }
-
         //found file names. Now performing query for each one.
-        for(String fileName : fileNames){
-
-            File methodFile = new File(testFolder.getAbsolutePath() + "/" + fileName);
-            LogUtils.log("creating file " + methodFile.getAbsolutePath());
-            methodFile.createNewFile();
-
-            FileWriter fw = new FileWriter(methodFile.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-
-            currentOffset = 0;
-            int index = 0;
-
-            while (true) {
-
-                LogUtils.log("retrieving " + currentOffset + " to " + (currentOffset+hitsPerSearch));
-
-
-                try{
-
-                    SearchResponse resp = client.prepareSearch()
-                            .setQuery(QueryBuilders.queryString("tags:\"" + tagToSearch + "\" AND tags:\"" + buildNumber + "\" AND path:\"" + fileName + "\""))
-                            .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("@timestamp").order(SortOrder.ASC)).execute().actionGet();
-
-                    LogUtils.log("size: " + resp.getHits().getTotalHits());
-                    LogUtils.log("iteration size: " + resp.getHits().hits().length);
-
-                    String message;
-
-                    for (SearchHit hit : resp.getHits()) {
-
-                        message = hit.getSource().get("message").toString();
-
-                        bw.write(message + "\n");
-                        index++;
-                    }
-
-                    //Break condition: No hits are returned
-                    if (resp.getHits().hits().length == 0) {
-                        break;
-                    }
-                } catch(Exception e){
-                    LogUtils.log("a problem occurred while querying", e);
-                    break;
-                }
-
-                currentOffset += hitsPerSearch;
-            }
-
-            bw.flush();
-            bw.close();
-            fw.close();
-        }
+//        for(String fileName : fileNames){
+//
+//            File methodFile = new File(testFolder.getAbsolutePath() + "/" + fileName);
+//            LogUtils.log("creating file " + methodFile.getAbsolutePath());
+//            methodFile.createNewFile();
+//
+//            FileWriter fw = new FileWriter(methodFile.getAbsoluteFile());
+//            BufferedWriter bw = new BufferedWriter(fw);
+//
+//            currentOffset = 0;
+//
+//            while (true) {
+//
+//                LogUtils.log("retrieving " + currentOffset + " to " + (currentOffset+hitsPerSearch));
+//
+//
+//                try{
+//
+//                    SearchResponse resp = client.prepareSearch()
+//                            .setQuery(QueryBuilders.queryString("tags:\"" + tagToSearch + "\" AND tags:\"" + buildNumber + "\" AND path:\"" + fileName + "\""))
+//                            .setFrom(currentOffset).setSize(hitsPerSearch).addSort(fieldSort("@timestamp").order(SortOrder.ASC)).execute().actionGet();
+//
+//                    LogUtils.log("size: " + resp.getHits().getTotalHits());
+//                    LogUtils.log("iteration size: " + resp.getHits().hits().length);
+//
+//                    String message;
+//
+//                    for (SearchHit hit : resp.getHits()) {
+//
+//                        message = hit.getSource().get("message").toString();
+//
+//                        bw.write(message + "\n");
+//                    }
+//
+//                    //Break condition: No hits are returned
+//                    if (resp.getHits().hits().length == 0) {
+//                        break;
+//                    }
+//                } catch(Exception e){
+//                    LogUtils.log("a problem occurred while querying", e);
+//                    break;
+//                }
+//
+//                currentOffset += hitsPerSearch;
+//            }
+//
+//            bw.flush();
+//            bw.close();
+//            fw.close();
+//        }
 
         long endTimeMillis = System.currentTimeMillis();
         LogUtils.log("all queries took " + (endTimeMillis - startTimeMillis)/1000 + " seconds");
