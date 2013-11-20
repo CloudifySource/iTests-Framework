@@ -243,7 +243,7 @@ public class LogFetcher {
                         methodFile.createNewFile();
                     }
 
-                    FileWriter fw = new FileWriter(methodFile.getAbsoluteFile());
+                    FileWriter fw = new FileWriter(methodFile.getAbsoluteFile(), true);
                     BufferedWriter bw = new BufferedWriter(fw);
 
                     message = hit.getSource().get("message").toString();
