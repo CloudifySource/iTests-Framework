@@ -376,6 +376,7 @@ public class SSHUtils {
                 if (!expectFail) {
                 	Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage());
                 }
+                return failResponse;
             }
         }catch (IOException e){
         	if (!expectFail) {
