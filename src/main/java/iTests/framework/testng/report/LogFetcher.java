@@ -206,7 +206,7 @@ public class LogFetcher {
 
         int hitsPerSearch = 200;
         int currentOffset = 0;
-        int querySizeLimit = 50000;
+        int querySizeLimit = 100000;
         long startTimeMillis = System.currentTimeMillis();
 
         while (true) {
