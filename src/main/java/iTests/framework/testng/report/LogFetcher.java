@@ -206,6 +206,7 @@ public class LogFetcher {
 
         int hitsPerSearch = 200;
         int currentOffset = 0;
+        int querySizeLimit = 50000;
         long startTimeMillis = System.currentTimeMillis();
 
         while (true) {
@@ -261,6 +262,11 @@ public class LogFetcher {
             } catch(Exception e){
 
                 LogUtils.log("a problem occurred while querying " + query, e);
+                break;
+            }
+
+            if(currentOffset >= querySizeLimit){
+                LogUtils.log("extremely large amount of log. stopping the query at " + currentOffset + " logs");
                 break;
             }
 
