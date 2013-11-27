@@ -342,6 +342,11 @@ public class SSHUtils {
 
     public static String runCommand(String ipAddress, long timeoutMilliseconds, String command,
             String username, String password) {
+    	return runCommand(ipAddress, timeoutMilliseconds, command, username, password, false);
+    }
+    
+    public static String runCommand(String ipAddress, long timeoutMilliseconds, String command,
+            String username, String password, boolean expectFail) {
         File output = null;
         try {
             output = File.createTempFile("sshCommand", ".txt");
@@ -368,12 +373,19 @@ public class SSHUtils {
             } catch(Exception e) {
                 String failResponse = readFileAsString(output);
                 LogUtils.log(failResponse);
-                Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage());
+                if (!expectFail) {
+                	Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage());
+                }
+                return failResponse;
             }
         }catch (IOException e){
-            Assert.fail("Failed creating temp file.", e);
+        	if (!expectFail) {
+        		Assert.fail("Failed creating temp file.", e);
+        	}
         } catch(Exception e) {
-            Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress);
+        	if (!expectFail) {
+        		Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress);
+        	}
         }
         finally {
             if (output != null){
