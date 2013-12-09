@@ -312,7 +312,7 @@ public class SSHUtils {
             return false;
         }
         
-        long timeoutMilliseconds = 1000;
+        long timeoutMilliseconds = 60 * 1000;
         String username = SetupUtils.USERNAME;
         String password = SetupUtils.PASSWORD;
         String command = "kill -9 " + pid;
