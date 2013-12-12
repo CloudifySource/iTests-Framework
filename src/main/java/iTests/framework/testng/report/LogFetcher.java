@@ -204,9 +204,9 @@ public class LogFetcher {
 
         Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(logstashServerHost, logstashServerPort));
 
-        int hitsPerSearch = 200;
+        int hitsPerSearch = 400;
         int currentOffset = 0;
-        int querySizeLimit = 100000;
+        int querySizeLimit = 500000;
         long startTimeMillis = System.currentTimeMillis();
 
         while (true) {
