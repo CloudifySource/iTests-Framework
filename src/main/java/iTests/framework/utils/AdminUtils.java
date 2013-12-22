@@ -70,12 +70,12 @@ public class AdminUtils {
         if (groupsProperty == null) {
             groupsProperty = System.getenv("LOOKUPGROUPS");
             if (groupsProperty == null)
-                LogUtils.log("Groups are not defined in system and environment.");
+                System.out.println("Groups are not defined in system and environment.");
             else
-                LogUtils.log("Groups are defined in environment: '" + groupsProperty + "'");
+                System.out.println("Groups are defined in environment: '" + groupsProperty + "'");
         }
         else
-            LogUtils.log("Groups are defined in system: '" + groupsProperty + "'");
+            System.out.println("Groups are defined in system: '" + groupsProperty + "'");
         return groupsProperty;
     }
 
@@ -94,7 +94,7 @@ public class AdminUtils {
         if (groups == null) {
             try {
                 groups = "sgtest-"+InetAddress.getLocalHost().getHostName();
-                LogUtils.log("Generated test groups: '" + groups + "'");
+                System.out.println("Generated test groups: '" + groups + "'");
             } catch (UnknownHostException e) {
                 AssertUtils.assertFail("Failed generating unique group name", e);
             }
@@ -107,7 +107,7 @@ public class AdminUtils {
             adminFactory.addGroups(getTestGroups());
          
         Admin admin = adminFactory.createAdmin();
-        LogUtils.log("Created admin with groups [" + java.util.Arrays.toString(admin.getGroups()) + "], locators ["
+        System.out.println("Created admin with groups [" + java.util.Arrays.toString(admin.getGroups()) + "], locators ["
             + java.util.Arrays.toString(admin.getLocators()) + "]");
         return admin;
     }
