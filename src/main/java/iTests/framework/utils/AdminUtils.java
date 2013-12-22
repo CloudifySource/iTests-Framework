@@ -107,8 +107,8 @@ public class AdminUtils {
             adminFactory.addGroups(getTestGroups());
          
         Admin admin = adminFactory.createAdmin();
-        LogUtils.log("Created admin with groups [" + java.util.Arrays.toString(admin.getGroups()) + "], locators [" 
-            java.util.Arrays.toString(admin.getLocators()) + "]");
+        LogUtils.log("Created admin with groups [" + java.util.Arrays.toString(admin.getGroups()) + "], locators ["
+            + java.util.Arrays.toString(admin.getLocators()) + "]");
         return admin;
     }
 	
