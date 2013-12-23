@@ -233,8 +233,8 @@ public class ScriptUtils {
                     LogUtils.log("caught IOException while teminating process", e);
                 }
             }
-
-            process.destroy();
+            if(process != null)
+                process.destroy();
         }
     }
 
