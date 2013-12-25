@@ -56,7 +56,7 @@ public class SGTestHelper {
 
 	}
 
-   public String getBackwardsRecipesBranch() {
+   public static String getBackwardsRecipesBranch() {
       return System.getProperty("org.cloudifysource.recipes-backwards.branch", "master");
    }
 	
