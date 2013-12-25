@@ -55,6 +55,10 @@ public class SGTestHelper {
 		return sgtestSrcDir;
 
 	}
+
+   public static String getBackwardsRecipesBranch() {
+      return System.getProperty("org.cloudifysource.recipes-backwards.branch", "master");
+   }
 	
 	public static String getSuiteName(){
 		return System.getProperty("iTests.suiteName", "");
