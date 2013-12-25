@@ -62,16 +62,22 @@ public class AdminUtils {
     private static final String SSH_PASSWORD = "tgrid";
     private static final long SSH_TIMEOUT = 3 *60 * 1000;
 
-	/**
-	 * @return lookup group environment variable value or null if undefined.
-	 */
-	private static String getGroupsEnvironmentVariable() {
-		String groupsProperty = System.getProperty("com.gs.jini_lus.groups");
+    /**
+     * @return lookup group environment variable value or null if undefined.
+     */
+    private static String getGroupsEnvironmentVariable() {
+        String groupsProperty = System.getProperty("com.gs.jini_lus.groups");
         if (groupsProperty == null) {
             groupsProperty = System.getenv("LOOKUPGROUPS");
+            if (groupsProperty == null)
+                System.out.println("Groups are not defined in system and environment.");
+            else
+                System.out.println("Groups are defined in environment: '" + groupsProperty + "'");
         }
+        else
+            System.out.println("Groups are defined in system: '" + groupsProperty + "'");
         return groupsProperty;
-	}
+    }
 
     public static String getWorkDirEnvironmentVariable() {
         String workDirProperty = System.getProperty(WORK_DIR_PROP);
@@ -83,24 +89,28 @@ public class AdminUtils {
         return deployDirProperty;
     }
 
-	public static String getTestGroups()  {
-		String groups = getGroupsEnvironmentVariable();
-		if (groups == null) {
-			try {
-				groups = "sgtest-"+InetAddress.getLocalHost().getHostName();
-			} catch (UnknownHostException e) {
-				AssertUtils.assertFail("Failed generating unique group name", e);
-			}
-		}
-		return groups;
-	}
+    public static String getTestGroups()  {
+        String groups = getGroupsEnvironmentVariable();
+        if (groups == null) {
+            try {
+                groups = "sgtest-"+InetAddress.getLocalHost().getHostName();
+                System.out.println("Generated test groups: '" + groups + "'");
+            } catch (UnknownHostException e) {
+                AssertUtils.assertFail("Failed generating unique group name", e);
+            }
+        }
+        return groups;
+    }
 	
-	private static Admin createAdmin(AdminFactory adminFactory) {
-		if (getGroupsEnvironmentVariable() == null) {
-			adminFactory.addGroups(getTestGroups());
-		}
-		return adminFactory.createAdmin();
-	}
+    private static Admin createAdmin(AdminFactory adminFactory) {
+        if (getGroupsEnvironmentVariable() == null) 
+            adminFactory.addGroups(getTestGroups());
+         
+        Admin admin = adminFactory.createAdmin();
+        System.out.println("Created admin with groups [" + java.util.Arrays.toString(admin.getGroups()) + "], locators ["
+            + java.util.Arrays.toString(admin.getLocators()) + "]");
+        return admin;
+    }
 	
 	public static Admin createAdmin() {
 		Admin admin = createAdmin(new AdminFactory());
