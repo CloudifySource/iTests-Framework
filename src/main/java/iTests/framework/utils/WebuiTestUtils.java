@@ -77,14 +77,15 @@ public class WebuiTestUtils{
 	private GridServiceManager webUIGSM;
 	private ProcessingUnit gswebui;
 
-	private final String defaultBrowser = (System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";
+    private final String browser = System.getProperty("selenium.browser");
+    private final String defaultBrowser = (browser != null) ? browser : "Firefox";
 
 	private List<Selenium> seleniumBrowsers = new ArrayList<Selenium>();
 	private ChromeDriverService chromeService;
 	
 	private int port;
-	
-	public WebuiTestUtils() throws Exception {
+
+    public WebuiTestUtils() throws Exception {
 		startup(true);
 	}
 
@@ -301,7 +302,6 @@ public class WebuiTestUtils{
 
 	private WebDriver initializeWebDriver() {
 		LogUtils.log("Launching browser...");
-		String browser = System.getProperty("selenium.browser");
 		WebDriver driver = null;
 		for (int i = 0 ; i < 3 ; i++) {
 			try {
@@ -315,7 +315,7 @@ public class WebuiTestUtils{
 					else {
 						if (browser.equals("IE")) {
                             if(System.getProperty("webdriver.ie.driver") == null){
-                                System.setProperty("webdriver.ie.driver", SGTestHelper.getSGTestRootDir() + "/src/main/resources/webui/IEDriverServer.exe");
+                                System.setProperty("webdriver.ie.driver", DefaultValues.get().getIEDriverPath());
                             }
 							DesiredCapabilities desired = DesiredCapabilities.internetExplorer();
 							desired.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
@@ -324,8 +324,8 @@ public class WebuiTestUtils{
 						else {
 							DesiredCapabilities desired = DesiredCapabilities.chrome();
 							desired.setCapability("chrome.switches", Arrays.asList("--start-maximized"));
-							String chromeDriverExePath = SGTestHelper.getSGTestRootDir() + "/src/main/resources/webui/chromedriver.exe";
-							chromeService = new ChromeDriverService.Builder().usingAnyFreePort().usingDriverExecutable(new File(chromeDriverExePath)).build();
+							String chromeDriverBinaryPath = DefaultValues.get().getChromeDriverPath();
+							chromeService = new ChromeDriverService.Builder().usingAnyFreePort().usingDriverExecutable(new File(chromeDriverBinaryPath)).build();
 							LogUtils.log("Starting Chrome Driver Server...");
 							chromeService.start();
 							driver = new RemoteWebDriver(chromeService.getUrl(), desired);
@@ -347,7 +347,7 @@ public class WebuiTestUtils{
 	}
 
 	private void startWebBrowser(String uRL) throws InterruptedException {
-		String browser = System.getProperty("selenium.browser");
+		String browser = this.browser;
 		driver = initializeWebDriver();
 		if (driver != null) {
 			driver.get(uRL);
@@ -525,7 +525,7 @@ public class WebuiTestUtils{
 		String browser = System.getProperty("selenium.browser", "Firefox");
 		if (!isDevMode() && browser.equals("Firefox")) {
 
-			String suiteName = "webui-" + System.getProperty("selenium.browser");
+			String suiteName = "webui-" + this.browser;
 
 			File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 
