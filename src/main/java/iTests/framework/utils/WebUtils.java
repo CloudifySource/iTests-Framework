@@ -92,19 +92,17 @@ public class WebUtils {
         // Do not use HEAD here! The spring org.cloudifysource.quality.iTests.framework we use does not like it.
         HttpGet get = new HttpGet(url.toURI());
         try {
-        	LogUtils.log("Executing HttpHead to url " + url);
+        	LogUtils.log("Executing HttpGet to url " + url);
             client.execute(get);
-            LogUtils.log("HttpHead returned succesfully");
+            LogUtils.log("HttpHead returned successfully");
             return true;
         }
         catch (Exception e) {
-        	LogUtils.log("Caught exception while exectuing HttpHead");
+        	LogUtils.log("Caught exception while executing HttpGet : " + e.getMessage());
         	return false;
         }
             finally {
-            LogUtils.log("closing connection manager");
             client.getConnectionManager().shutdown();
-            LogUtils.log("connection manager closed");
         }
     }
 
