@@ -17,7 +17,7 @@
     </properties>
 
     <groupId>iTests.framework</groupId>
-    <version>1.0.39-SNAPSHOT</version>
+    <version>1.0.40-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
