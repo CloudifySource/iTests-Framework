@@ -17,7 +17,7 @@
     </properties>
 
     <groupId>iTests.framework</groupId>
-    <version>1.0.40-SNAPSHOT</version>
+    <version>1.0.41-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
@@ -133,7 +133,7 @@
         <dependency>
             <groupId>com.gigaspaces.quality</groupId>
             <artifactId>webuitf</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
+            <version>1.0.5-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.gigaspaces.quality</groupId>
