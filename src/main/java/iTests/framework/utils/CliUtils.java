@@ -443,7 +443,7 @@ public class CliUtils {
     }
 
     private static String getSpaceName(IJSpace space) throws Exception {
-        return space.getContainerName() + ":" + space.getName();
+        return space.getName();
     }
 
     private static int count(IJSpace target, Object tmpl) throws TransactionException,
