@@ -157,11 +157,13 @@ public class ScriptUtils {
             if (relativeToGigaspacesBinDir) {
                 binPath = getBuildBinPath();
                 this.args[0] = binPath + "/" + this.args[0] + getScriptSuffix();
+                this.processBuilder = new ProcessBuilder(this.args[0])
+                        .redirectErrorStream(true);
             }
-            this.processBuilder = new ProcessBuilder(args + getScriptSuffix())
-                    .redirectErrorStream(true);
-            if (relativeToGigaspacesBinDir)
-                processBuilder.directory(new File(binPath));
+            else{
+                this.processBuilder = new ProcessBuilder(args + getScriptSuffix())
+                        .redirectErrorStream(true);
+            }
             this.thread = new Thread(this);
             this.thread.start();
         }
