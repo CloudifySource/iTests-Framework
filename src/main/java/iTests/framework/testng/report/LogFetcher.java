@@ -128,7 +128,7 @@ public class LogFetcher {
             LogUtils.log("the index within ans of the build number is: " + index);
         }
         else{
-            ans = getUrl() + path.substring(index);
+            ans = getUrl() + "deploy/local-builds/" + path.substring(index);
         }
 
         if(enableLogstash){
@@ -144,6 +144,7 @@ public class LogFetcher {
             ans = finalUrl.toString();
         }
 
+        LogUtils.log("returning file url: " + ans);
         return ans;
     }
 
