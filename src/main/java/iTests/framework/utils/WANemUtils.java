@@ -201,8 +201,7 @@ public class WANemUtils {
 	}
 
     private static void addRoute(String srcIP, String dstIP) {
-//        SSHUtils.runCommand(srcIP, 60000, addRouteCommand(dstIP, WANEM_IP), SSH_USERNAME, SSH_PASSWORD);
-        SSHUtils.runCommand(srcIP, 60000, "cd /export/tgrid/nirb/; mkdir fgfg", SSH_USERNAME, SSH_PASSWORD);
+        SSHUtils.runCommand(srcIP, 60000, addRouteCommand(dstIP, WANEM_IP), SSH_USERNAME, SSH_PASSWORD);
 
     }
     
