@@ -3,38 +3,17 @@ package iTests.framework.utils;
 import com.j_spaces.kernel.PlatformVersion;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteWatchdog;
-import org.apache.commons.exec.Executor;
-import org.apache.commons.exec.LogOutputStream;
-import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.*;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.hyperic.sigar.Sigar;
 import org.testng.Assert;
 
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import javax.xml.stream.*;
+import java.io.*;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -107,104 +86,91 @@ public class ScriptUtils {
 
     @SuppressWarnings("deprecation")
     public static String runScriptRelativeToGigaspacesBinDir(String args, long timeout) throws Exception {
-        RunScript runScript = new RunScript(args, true);
-        Thread script = new Thread(runScript);
-        script.start();
-        Thread.sleep(timeout);
-        script.stop();
-
-        runScript.kill();
-        return runScript.getScriptOutput();
+        return RunScript.run(args, timeout, true);
     }
 
     public static String runScriptWithAbsolutePath(String args, long timeout) throws Exception {
-        RunScript runScript = new RunScript(args, false);
-        Thread script = new Thread(runScript);
-        script.start();
-        script.join(timeout);
-        runScript.kill();
-        return runScript.getScriptOutput();
+        return RunScript.run(args, timeout, false);
     }
 
     public static RunScript runScriptWithAbsolutePath(String args) {
-        RunScript runScript = new RunScript(args, false);
-        Thread script = new Thread(runScript);
-        script.start();
-        return runScript;
+        return new RunScript(args, false);
     }
 
     public static RunScript runScriptRelativeToGigaspacesBinDir(String args) throws Exception {
-        RunScript runScript = new RunScript(args, true);
-        Thread script = new Thread(runScript);
-        script.start();
-        return runScript;
+        return new RunScript(args, true);
     }
 
     @SuppressWarnings("deprecation")
     public static String runScript(String args, long timeout) throws Exception {
-        RunScript runScript = new RunScript(args);
-        Thread script = new Thread(runScript);
-        script.start();
-        Thread.sleep(timeout);
-        script.stop();
-
-        runScript.kill();
-        return runScript.getScriptOutput();
+        return RunScript.run(args, timeout, true);
     }
 
     public static RunScript runScript(String args) throws Exception {
-        RunScript runScript = new RunScript(args);
-        Thread script = new Thread(runScript);
-        script.start();
-        return runScript;
+        return new RunScript(args, true);
     }
 
     public static class RunScript implements Runnable {
 
         private final String[] args;
-        private String scriptFilename;
-        private String binPath;
-        private final StringBuilder sb = new StringBuilder();
+        private final StringBuilder sb;
+        private final ProcessBuilder processBuilder;
+        private final Thread thread;
         private Process process;
 
-        public RunScript(String args) {
-            this.args = args.split(" ");
-            scriptFilename = this.args[0];
-            scriptFilename += getScriptSuffix();
-            binPath = getBuildBinPath();
-            this.args[0] = binPath + "/" + scriptFilename;
+        public static String run(String args, long timeout, boolean relativeToGigaspacesBinDir)
+                throws InterruptedException, IOException {
+            RunScript runScript = new RunScript(args, relativeToGigaspacesBinDir);
+            runScript.thread.join(timeout);
+            if (runScript.thread.isAlive())
+                runScript.thread.stop();
+            runScript.kill();
+            return runScript.getScriptOutput();
         }
 
         public RunScript(String args, boolean relativeToGigaspacesBinDir) {
+
+            this.sb = new StringBuilder();
             this.args = args.split(" ");
+            String binPath = null;
             if (relativeToGigaspacesBinDir) {
-                scriptFilename = this.args[0];
-                scriptFilename += getScriptSuffix();
                 binPath = getBuildBinPath();
-                this.args[0] = binPath + "/" + scriptFilename;
+                if (this.args[0].endsWith(getScriptSuffix())){
+                    this.args[0] = binPath + "/" + this.args[0];
+                }
+                else {
+                    this.args[0] = binPath + "/" + this.args[0] + getScriptSuffix();
+                }
+                this.processBuilder = new ProcessBuilder(this.args)
+                        .redirectErrorStream(true);
             }
+            else{
+                if (!this.args[0].endsWith(getScriptSuffix())){
+                    this.args[0] += getScriptSuffix();
+                }
+                this.processBuilder = new ProcessBuilder(this.args)
+                        .redirectErrorStream(true);
+            }
+            this.thread = new Thread(this);
+            this.thread.start();
         }
 
         public void run() {
-            String line;
-            ProcessBuilder pb = new ProcessBuilder(args);
-            if (binPath != null) {
-                pb.directory(new File(binPath));
-            }
-            pb.redirectErrorStream(true);
 
             try {
-                process = pb.start();
-                InputStreamReader isr = new InputStreamReader(process.getInputStream());
-                BufferedReader br = new BufferedReader(isr);
+                process = processBuilder.start();
+                BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
+                String line;
                 while ((line = br.readLine()) != null) {
-                    sb.append(line);
-                    sb.append("\n");
+                    sb.append(line).append("\n");
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                if (process == null)
+                    LogUtils.log("Failed to start process", e);
+                else
+                    LogUtils.log("Failed to monitor process", e);
             }
         }
 

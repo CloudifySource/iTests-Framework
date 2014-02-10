@@ -17,7 +17,7 @@
     </properties>
 
     <groupId>iTests.framework</groupId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
@@ -51,6 +51,11 @@
                     <artifactId>log4j</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.gigaspaces</groupId>
+            <artifactId>gs-openspaces-jetty</artifactId>
+            <version>${gsVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
@@ -218,6 +223,13 @@
                     <groupId>xml-apis</groupId>
                     <artifactId>xml-apis</artifactId>
                     <version>1.4.01</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.gigaspaces</groupId>
+                    <artifactId>gs-openspaces-jetty</artifactId>
+                    <version>${gsVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${xap.home}/lib/platform/openspaces/gs-openspaces-jetty.jar</systemPath>
                 </dependency>
             </dependencies>
         </profile>
