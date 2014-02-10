@@ -156,12 +156,20 @@ public class ScriptUtils {
             String binPath = null;
             if (relativeToGigaspacesBinDir) {
                 binPath = getBuildBinPath();
-                this.args[0] = binPath + "/" + this.args[0] + getScriptSuffix();
-                this.processBuilder = new ProcessBuilder(this.args[0])
+                if (this.args[0].endsWith(getScriptSuffix())){
+                    this.args[0] = binPath + "/" + this.args[0];
+                }
+                else {
+                    this.args[0] = binPath + "/" + this.args[0] + getScriptSuffix();
+                }
+                this.processBuilder = new ProcessBuilder(this.args)
                         .redirectErrorStream(true);
             }
             else{
-                this.processBuilder = new ProcessBuilder(args + getScriptSuffix())
+                if (!this.args[0].endsWith(getScriptSuffix())){
+                    this.args[0] += getScriptSuffix();
+                }
+                this.processBuilder = new ProcessBuilder(this.args)
                         .redirectErrorStream(true);
             }
             this.thread = new Thread(this);
