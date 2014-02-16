@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 /**
  * A set of utility methods for IO manipulation
@@ -79,6 +80,25 @@ public class IOUtils {
         writer.write(newtext);
         writer.close();
 	}
+
+    /**
+     *
+     * Enables to replace strings in a file according to a regex
+     * @param filePath
+     * @param map
+     * @throws IOException
+     */
+    public static void replaceTextPatternInFile(String filePath, Map<Pattern, String> map) throws IOException {
+
+        Map<String,String> replaceMap = new HashMap<String, String>();
+
+        for(Pattern p : map.keySet()){
+            replaceMap.put(p.toString(),map.get(p));
+        }
+
+        replaceTextInFile(filePath, replaceMap);
+
+    }
 
 	public static void replaceTextInFile(File file, Map<String,String> map) throws IOException {
 		String originalFileContents = FileUtils.readFileToString(file);
