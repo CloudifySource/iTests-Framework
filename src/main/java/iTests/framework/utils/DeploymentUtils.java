@@ -106,12 +106,14 @@ public class DeploymentUtils {
     public static Properties loadPropertiesFromClasspath(String classpath) {
         InputStream is = ClassLoader.getSystemResourceAsStream(classpath);
         Properties props = new Properties();
-        try {
-            props.load(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (RuntimeException e) {
-            e.printStackTrace();
+        if (is != null) {
+            try {
+                props.load(is);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
         }
         return props;
     }
