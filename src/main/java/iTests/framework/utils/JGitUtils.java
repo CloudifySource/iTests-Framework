@@ -1,23 +1,40 @@
 package iTests.framework.utils;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+
+import java.io.File;
+import java.io.IOException;
 
 public class JGitUtils {
 
     public static void clone(String localGitRepoPath, String repositoryUrl, String branchName) throws IOException {
+        clone(localGitRepoPath,repositoryUrl,branchName, null, null);
+    }
+
+    public static void clone(String localGitRepoPath, String repositoryUrl, String branchName, String username, String password) throws IOException {
         if (!new File(localGitRepoPath).exists()) {
             try {
                 LogUtils.log("Cloning cloudify-recipes repo to " + localGitRepoPath);
-                Git.cloneRepository()
-                        .setURI(repositoryUrl)
-                        .setDirectory(new File(localGitRepoPath))
-                        .call();
+                if (username!= null && password !=null){
+                    // credentials
+                    CredentialsProvider cp = new UsernamePasswordCredentialsProvider(username, password);
+                    Git.cloneRepository()
+                            .setCredentialsProvider(cp)
+                            .setURI(repositoryUrl)
+                            .setDirectory(new File(localGitRepoPath))
+                            .call();
+                }
+                else {
+                    Git.cloneRepository()
+                            .setURI(repositoryUrl)
+                            .setDirectory(new File(localGitRepoPath))
+                            .call();
+                }
                 if (!branchName.equalsIgnoreCase("master")) {
                     LogUtils.log("Branch under test is : " + branchName);
                     Git git = Git.open(new File(localGitRepoPath));
