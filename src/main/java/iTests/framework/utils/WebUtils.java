@@ -1,6 +1,22 @@
 package iTests.framework.utils;
 
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -12,19 +28,6 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.openspaces.jee.sessions.jetty.SessionData;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 public class WebUtils {
 
@@ -93,9 +96,14 @@ public class WebUtils {
         HttpGet get = new HttpGet(url.toURI());
         try {
         	LogUtils.log("Executing HttpGet to url " + url);
-            client.execute(get);
-            LogUtils.log("HttpHead returned successfully");
-            return true;
+            HttpResponse execute = client.execute(get);
+            if (execute.getStatusLine().getStatusCode() == HttpServletResponse.SC_NOT_FOUND) {
+            	LogUtils.log("Http request failed");
+            	return false;
+            } else {
+            	LogUtils.log("HttpHead returned successfully");
+            	return true;
+            }
         }
         catch (Exception e) {
         	LogUtils.log("Caught exception while executing HttpGet : " + e.getMessage());
