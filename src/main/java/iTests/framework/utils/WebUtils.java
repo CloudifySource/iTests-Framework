@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -34,15 +35,15 @@ public class WebUtils {
     /***
      *  Used to get the session attributeMap which is protected
      */
-    public static ConcurrentHashMap<String, Object> getSessionDataAttributeMap(
+    public static Map<String, Object> getSessionDataAttributeMap(
             SessionData data) throws Exception {
 
         Class clazz = data.getClass();
         Class[] paramTypes = new Class[] {};
         Method m = clazz.getDeclaredMethod("getAttributeMap", paramTypes);
         m.setAccessible(true);
-        ConcurrentHashMap<String, Object> result = 
-            (ConcurrentHashMap<String, Object>) m.invoke(data, new Object[] {});
+        Map<String, Object> result =
+            (Map<String, Object>) m.invoke(data, new Object[] {});
 
         return result;
     }
