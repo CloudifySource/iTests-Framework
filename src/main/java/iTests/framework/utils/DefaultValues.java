@@ -127,14 +127,16 @@ public abstract class DefaultValues {
 
         @Override
         public String getChromeDriverPath() {
-            throw new MissingResourceException(
-                    "we don't have a chrome driver for Windows 64 yet. please download one and return its path from this method if you wish to run tests on this operating system.", null, null);
+//            throw new MissingResourceException(
+//                    "we don't have a chrome driver for Windows 64 yet. please download one and return its path from this method if you wish to run tests on this operating system.", null, null);
+            return SGTestHelper.getSGTestRootDir() + "/src/main/resources/webui/chromedriver.exe";
         }
 
         @Override
         public String getIEDriverPath() {
-            throw new MissingResourceException(
-                    "we don't have an IE driver for Windows 64 yet. please download one and return its path from this method if you wish to run tests on this operating system.", null, null);
+//            throw new MissingResourceException(
+//                    "we don't have an IE driver for Windows 64 yet. please download one and return its path from this method if you wish to run tests on this operating system.", null, null);
+            return SGTestHelper.getSGTestRootDir() + "/src/main/resources/webui/IEDriverServer.exe";
         }
     }
 
