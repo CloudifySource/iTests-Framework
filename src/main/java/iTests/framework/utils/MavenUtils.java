@@ -25,6 +25,7 @@ public class MavenUtils {
 	public static final String mavenCompile = "mvn compile";
 	public static final String mavenPackage = "mvn package";
 	public static final String mavenDeploy = "mvn os:deploy";
+    public static final String mavenUndeploy = "mvn os:undeploy";
 	public static final String mavenRun = "mvn os:run";
 	public static final String mavenRunStandalone = "mvn os:run-standalone";
 
