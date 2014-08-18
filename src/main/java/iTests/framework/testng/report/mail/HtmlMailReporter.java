@@ -84,7 +84,7 @@ public class HtmlMailReporter {
         sb.append("</html>");
 
         try {
-            if (suiteName.contains("webui")) {
+            if (suiteName.toLowerCase().contains("webui")) {
                 mailRecipients = mailProperties.getWebUIRecipients();
             }else{
                 if (suiteName.equals("ServiceGrid")) {
