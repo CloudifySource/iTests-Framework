@@ -11,6 +11,8 @@ import java.util.Properties;
 
 public class SGTestHelper {
 
+    private static final String DEV_BUILD_PATH_PROP = "dev.build.path";
+
 	/**
 	 * This is a very cool method which returns jar or directory from where the supplied class has loaded.
 	 * 
@@ -101,6 +103,15 @@ public class SGTestHelper {
 	}
 
 	public static String getBuildDir(){
+        if (SGTestHelper.isDevMode()) {
+            String buildPathOnLinuxMachine = System.getProperty(DEV_BUILD_PATH_PROP);
+            if (buildPathOnLinuxMachine == null) {
+                throw new IllegalStateException("You are running in dev mode. please set the dev.build.path System Property to point to the build path on your linux machine");
+            }
+            else {
+                return buildPathOnLinuxMachine;
+            }
+        }
 		return ScriptUtils.getBuildPath();
 	}
 

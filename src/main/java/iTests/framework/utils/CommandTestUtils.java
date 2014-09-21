@@ -1,23 +1,22 @@
 package iTests.framework.utils;
 
 import com.gigaspaces.internal.sigar.SigarHolder;
+import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
 import org.hyperic.sigar.ptql.ProcessFinder;
+import org.openspaces.admin.Admin;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class CommandTestUtils {
 
@@ -415,5 +414,41 @@ public class CommandTestUtils {
 			throws SigarException {
 		return getPidsWithQuery("Exe.Name.eq=" + name);
 	}
+
+    public static String buildAgentCommand(String startupCommand, Admin admin, Logger logger) {
+        return buildAgentCommand(startupCommand, null, admin, logger);
+    }
+
+    public static String buildAgentCommand(String startupCommand, String lookupGroup, Admin admin, Logger logger) {
+
+        String groupToUse;
+
+        if(lookupGroup == null){
+            String[] groups = admin.getGroups();
+            for (String group : groups) {
+                logger.info("Admin Lookup Group : " + group);
+            }
+
+            groupToUse = groups[0];
+        }
+        else{
+            groupToUse = lookupGroup;
+        }
+
+        logger.info("Using group " + groupToUse + " to start services");
+        String setLookupGroupCommand = "LOOKUPGROUPS=" + groupToUse;
+        String exportLookupGroups = "export LOOKUPGROUPS";
+        String buildPath = SGTestHelper.getBuildDir();
+        String pathToAgent = buildPath + "/bin/gs-agent.sh";
+        String deployAndWorkDir ="";
+        String work, deploy;
+        if((work = System.getProperty("com.gs.work")) != null && (deploy = System.getProperty("com.gs.deploy")) != null){
+            logger.info("Using deploy dir: " + deploy + " and work dir: " + work);
+            String setJavaOptionsCommand = "EXT_JAVA_OPTIONS=\"-Dcom.gs.work=" + work +" -Dcom.gs.deploy=" + deploy + "\"";
+            String exportJavaOptions = "export EXT_JAVA_OPTIONS";
+            deployAndWorkDir = setJavaOptionsCommand + ";" + exportJavaOptions + ";";
+        }
+        return  deployAndWorkDir + setLookupGroupCommand  + ";" + exportLookupGroups + ";" + pathToAgent + " " + startupCommand;
+    }
 
 }
