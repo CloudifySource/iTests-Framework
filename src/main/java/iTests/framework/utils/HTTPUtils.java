@@ -32,7 +32,8 @@ public class HTTPUtils {
         RESPONSE_BODY,
         COOKIES
     }
-
+/*
+Commented by Yohana. Reason: Not tested thus might not work as expected!
     public static boolean isAlive(String url) {
         try {
             HttpURLConnection.setFollowRedirects(false);
@@ -73,7 +74,7 @@ public class HTTPUtils {
         finally {
             client.getConnectionManager().shutdown();
         }
-    }
+    }*/
 
     public static class HTTPSession {
         BasicCookieStore cookieStore = new BasicCookieStore();
