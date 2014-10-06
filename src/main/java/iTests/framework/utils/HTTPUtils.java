@@ -153,69 +153,23 @@ Commented by Yohana. Reason: Not tested thus might not work as expected!
             result.put(PARAMS.RESPONSE_CODE, String.valueOf(response.getStatusLine().getStatusCode()));
             Iterator<Cookie> it = cookieStore.getCookies().iterator();
             String cookies ="";
+     /*       String urlString = _urlAsString;
+            if (urlString.lastIndexOf('/') == urlString.length()-1) {
+                urlString = urlString.substring(0, urlString.length() -1);
+            }*/
+            URL url = new URL(/*urlString*/_urlAsString);
             while (it.hasNext()) {
                 Cookie c = it.next();
-                cookies += c.getName()+"="+c.getValue();
-                if (it.hasNext()) {
-                    cookies += ";";
+                if (c.getDomain().equals(url.getHost()) /*&& c.getPath().equals(url.getPath())*/) {
+                    cookies += c.getName() + "=" + c.getValue();
+                    if (it.hasNext()) {
+                        cookies += ";";
+                    }
                 }
             }
             result.put(PARAMS.COOKIES, cookies);
             return result;
         }
-    }
-    /*
-    public class AA {
-
-        public AA withKeyValue(String key, String value) {
-            postParams.add(new BasicNameValuePair(key, value));
-            return this;
-        }
-
-        public HashMap<PARAMS, String> post() throws IOException {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(_urlAsString);
-
-            if (postParams != null) {
-                httpPost.setEntity(new UrlEncodedFormEntity(postParams, "UTF-8"));
-                postParams = null;
-            }
-            HttpResponse response = httpClient.execute(httpPost);
-
-            HttpEntity entity = response.getEntity();
-            String responseString = EntityUtils.toString(entity, "UTF-8");
-            HashMap<PARAMS, String> result = new HashMap<PARAMS, String>();
-            result.put(PARAMS.RESPONSE_BODY, responseString);
-            result.put(PARAMS.RESPONSE_CODE, String.valueOf(response.getStatusLine().getStatusCode()));
-            result.put(PARAMS.RESPONSE_SET_COOKIES, response.getFirstHeader("Set-Cookie").getValue());
-            return result;
-        }
-
-        public HashMap<PARAMS, String> get() throws IOException {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(_urlAsString);
-
-            HttpResponse response = httpClient.execute(httpGet);
-            HttpEntity entity = response.getEntity();
-            String responseString = EntityUtils.toString(entity, "UTF-8");
-            System.out.println(responseString);
-            HashMap<PARAMS, String> result = new HashMap<PARAMS, String>();
-            result.put(PARAMS.RESPONSE_BODY, responseString);
-            result.put(PARAMS.RESPONSE_CODE, String.valueOf(response.getStatusLine().getStatusCode()));
-            result.put(PARAMS.RESPONSE_SET_COOKIES, response.getFirstHeader("Set-Cookie").getValue());
-            return result;
-        }
-
-    }*/
-
-    public static HashMap<String, String> getParsedCookies(String value) {
-        HashMap<String, String> result = new HashMap<String, String>();
-        String[] parts = value.split(";");
-        for (String part : parts) {
-            String[] splitted = part.split("=");
-            result.put(splitted[0], splitted[1]);
-        }
-        return result;
     }
 
 }
