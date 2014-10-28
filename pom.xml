@@ -17,13 +17,18 @@
     </properties>
 
     <groupId>iTests.framework</groupId>
-    <version>1.0.53-SNAPSHOT</version>
+    <version>1.0.54-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
         <repository>
             <id>openspaces</id>
             <url>http://maven-repository.openspaces.org</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
         </repository>
     </repositories>
 

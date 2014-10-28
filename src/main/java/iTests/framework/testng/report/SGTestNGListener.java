@@ -41,6 +41,9 @@ public class SGTestNGListener extends TestListenerAdapter {
     private static File propsFile = new File(CREDENTIALS_FOLDER + "/logstash/logstash.properties");
     protected String logstashHost;
 
+    private static long testInvocationCounter = 1;
+    private static final long maxCount = Long.getLong("sgtest.webui.numberOfTestRetries", 3) + 1;
+
     public SGTestNGListener(){
         if(enableLogstash){
             LogUtils.log("in SGTestNGListener constructor");
@@ -280,10 +283,27 @@ public class SGTestNGListener extends TestListenerAdapter {
 
     @Override
     public void onTestFailure(ITestResult iTestResult) {
+        if (suiteName.toLowerCase().contains("webui")){
+            if(testInvocationCounter < maxCount) {
+                testInvocationCounter++;
+                iTestResult.setAttribute("retry", true);
+            }
+            else {
+                LogUtils.log("Number of retries expired.");
+                iTestResult.setStatus(ITestResult.FAILURE);
+                // reset count
+                testInvocationCounter = 1;
+                testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
+                LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
+                write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
+            }
+        }
+        else {
+            testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
+            LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
+            write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
+        }
         super.onTestFailure(iTestResult);
-        testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
-        LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
-        write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
     }
 
     @Override
@@ -297,6 +317,9 @@ public class SGTestNGListener extends TestListenerAdapter {
 	@Override
     public void onTestSuccess(ITestResult iTestResult) {
         super.onTestSuccess(iTestResult);
+        if (suiteName.toLowerCase().contains("webui")){
+            testInvocationCounter = 1;
+        }
         testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
         LogUtils.log("Test Passed: " + testMethodName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
@@ -304,6 +327,16 @@ public class SGTestNGListener extends TestListenerAdapter {
 
     @Override
     public void onFinish(ITestContext testContext) {
+        if (suiteName.toLowerCase().contains("webui")){
+            for (ITestNGMethod testMethod : testContext.getAllTestMethods()) {
+                if (testMethod.getCurrentInvocationCount() >= 2) {
+                    if (testContext.getFailedTests().getResults(testMethod).size() == 2
+                            || testContext.getPassedTests().getResults(testMethod).size() == 1) {
+                        testContext.getFailedTests().removeResult(testMethod);
+                    }
+                }
+            }
+        }
         super.onFinish(testContext);
     }
 
