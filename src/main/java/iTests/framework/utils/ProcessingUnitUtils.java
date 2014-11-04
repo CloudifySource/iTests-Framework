@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static iTests.framework.utils.AssertUtils.sleep;
+import static iTests.framework.utils.LogUtils.log;
 
 public class ProcessingUnitUtils {
 
@@ -337,6 +338,13 @@ public class ProcessingUnitUtils {
             machines.add(puInstance.getMachine());
         }
         return machines;
+    }
+
+    public void assertRedoLogOfAllSpaceInstancesDropsToZero(ProcessingUnit pu, long timeout) {
+        for (ProcessingUnitInstance instance : pu.getInstances()) {
+            log("asserting space instance " + instance.getName() + " of mode " + instance.getSpaceInstance().getMode() + " redo log drops to 0");
+            AdminUtils.assertRedoLogDropsToZero(instance.getSpaceInstance(), timeout);
+        }
     }
 	
 }

@@ -42,6 +42,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static iTests.framework.utils.LogUtils.log;
+
 /**
  * Utility methods on top of the Admin API
  * 
@@ -851,5 +853,29 @@ public class AdminUtils {
 		strBuilder.append( ")" );
 
 		return strBuilder.toString();        
-	}    
+	}
+
+    public static void assertRedoLogDropsToZero(final SpaceInstance instance, long timeout) {
+
+        AssertUtils.RepetitiveConditionProvider condition = new AssertUtils.RepetitiveConditionProvider() {
+            @Override
+            public boolean getCondition() {
+                long countRedoLog = countRedoLog(instance);
+                log("asserting space instance " + instance.getSpaceInstanceName() + " of mode " + instance.getMode() + " redo log drops to 0. Actual " + countRedoLog);
+                return countRedoLog == 0;
+            }
+        };
+        AssertUtils.repetitiveAssertTrue("redo log has not decreased to zero after " + timeout + " millis", condition, timeout);
+    }
+
+    public static long countRedoLog(SpaceInstance instance) {
+        AssertUtils.assertNotNull(instance);
+        SpaceInstanceStatistics statistics = instance.getStatistics();
+        AssertUtils.assertNotNull(statistics);
+        ReplicationStatistics replicationStatistics = statistics.getReplicationStatistics();
+        AssertUtils.assertNotNull(replicationStatistics);
+        ReplicationStatistics.OutgoingReplication outgoingReplication = replicationStatistics.getOutgoingReplication();
+        AssertUtils.assertNotNull(outgoingReplication);
+        return outgoingReplication.getRedoLogSize();
+    }
 }
