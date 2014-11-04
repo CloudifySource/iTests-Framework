@@ -340,7 +340,7 @@ public class ProcessingUnitUtils {
         return machines;
     }
 
-    public void assertRedoLogOfAllSpaceInstancesDropsToZero(ProcessingUnit pu, long timeout) {
+    public static void assertRedoLogOfAllSpaceInstancesDropsToZero(ProcessingUnit pu, long timeout) {
         for (ProcessingUnitInstance instance : pu.getInstances()) {
             log("asserting space instance " + instance.getName() + " of mode " + instance.getSpaceInstance().getMode() + " redo log drops to 0");
             AdminUtils.assertRedoLogDropsToZero(instance.getSpaceInstance(), timeout);
