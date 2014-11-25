@@ -1,13 +1,8 @@
 package iTests.framework.testng.report;
 
 import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.DeploymentUtils;
-import iTests.framework.utils.DumpUtils;
-import iTests.framework.utils.IOUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ZipUtils;
+import iTests.framework.utils.*;
 import iTests.framework.utils.TestNGUtils;
-//import org.apache.commons.io.FileUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
@@ -16,9 +11,14 @@ import org.apache.commons.vfs2.impl.DefaultFileMonitor;
 import org.jruby.embed.ScriptingContainer;
 import org.testng.*;
 
-import java.io.*;
-import java.util.Properties;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+//import org.apache.commons.io.FileUtils;
 
 
 public class SGTestNGListener extends TestListenerAdapter {
@@ -327,17 +327,50 @@ public class SGTestNGListener extends TestListenerAdapter {
 
     @Override
     public void onFinish(ITestContext testContext) {
+        super.onFinish(testContext);
+        LogUtils.log("Finishing Suite: "+suiteName.toLowerCase());
         if (suiteName.toLowerCase().contains("webui")){
-            for (ITestNGMethod testMethod : testContext.getAllTestMethods()) {
-                if (testMethod.getCurrentInvocationCount() >= 2) {
-                    if (testContext.getFailedTests().getResults(testMethod).size() == 2
-                            || testContext.getPassedTests().getResults(testMethod).size() == 1) {
-                        testContext.getFailedTests().removeResult(testMethod);
-                    }
-                }
+            onFinishWebUITests(testContext);
+        }
+    }
+
+    private void onFinishWebUITests(ITestContext testContext){
+        // List of test results which we will delete later because of duplication or because the test eventually passed
+        List<ITestResult> testsToBeRemoved = new ArrayList<ITestResult>();
+
+        // collect all id's from passed test
+        Set <Integer> passedTestIds = new HashSet<Integer>();
+        for (ITestResult passedTest : testContext.getPassedTests().getAllResults()) {
+            passedTestIds.add(getTestId(passedTest));
+        }
+
+        Set <Integer> failedTestIds = new HashSet<Integer>();
+        for (ITestResult failedTest : testContext.getFailedTests().getAllResults()) {
+
+            int failedTestId = getTestId(failedTest);
+            // if this test failed before mark as to be deleted
+            // or delete this failed test if there is at least one passed version
+            if (failedTestIds.contains(failedTestId) || passedTestIds.contains(failedTestId)) {
+                testsToBeRemoved.add(failedTest);
+            } else {
+                failedTestIds.add(failedTestId);
             }
         }
-        super.onFinish(testContext);
+        // finally delete all tests that are marked
+        for (Iterator<ITestResult> iterator = testContext.getFailedTests().getAllResults().iterator(); iterator.hasNext(); ) {
+            ITestResult testResult = iterator.next();
+            if (testsToBeRemoved.contains(testResult)) {
+                iterator.remove();
+            }
+        }
+    }
+
+    // returns an ID for each test result
+    private int getTestId(ITestResult result) {
+        int id = result.getTestClass().getName().hashCode();
+        id = 31 * id + result.getMethod().getMethodName().hashCode();
+        id = 31 * id + (result.getParameters() != null ? Arrays.hashCode(result.getParameters()) : 0);
+        return id;
     }
 
     private void write2LogFile(ITestResult iTestResult, File testFolder) {
