@@ -3,7 +3,6 @@ package iTests.framework.utils;
 import com.gigaspaces.logger.GSLogConfigLoader;
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.WebConstants;
-import com.gigaspaces.webuitf.dashboard.DashboardTab;
 import com.j_spaces.kernel.PlatformVersion;
 import com.thoughtworks.selenium.Selenium;
 import iTests.framework.tools.SGTestHelper;
@@ -512,12 +511,6 @@ public class WebuiTestUtils{
 		}
 		return null;
 
-	}
-
-	public DashboardTab refreshPage() throws InterruptedException {
-		driver.navigate().refresh();
-		Thread.sleep(10000);
-		return new DashboardTab(selenium, driver);
 	}
 
 	public void takeScreenShot(Class<?> cls, String testMethod, String picName) {
