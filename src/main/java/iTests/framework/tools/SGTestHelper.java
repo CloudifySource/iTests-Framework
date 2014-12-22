@@ -104,7 +104,7 @@ public class SGTestHelper {
 
 	public static String getBuildDir(){
         if (SGTestHelper.isDevMode()) {
-            String buildPathOnLinuxMachine = System.getProperty(DEV_BUILD_PATH_PROP);
+            String buildPathOnLinuxMachine = System.getProperty(DEV_BUILD_PATH_PROP, System.getenv("XAP_HOME"));
             if (buildPathOnLinuxMachine == null) {
                 throw new IllegalStateException("You are running in dev mode. please set the dev.build.path System Property to point to the build path on your linux machine");
             }
