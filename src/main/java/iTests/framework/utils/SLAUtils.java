@@ -1,11 +1,13 @@
 package iTests.framework.utils;
 
 import org.openspaces.admin.Admin;
+import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.ProcessingUnitPartition;
 
 import static iTests.framework.utils.ProcessingUnitUtils.getProcessingUnitInstanceName;
+import static org.junit.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNotSame;
 
@@ -79,4 +81,10 @@ public class SLAUtils {
 			}
         }
     }
+
+	public static void assertRequiresIsolation(Admin admin) {
+		for (GridServiceContainer gsc : admin.getGridServiceContainers()) {
+			assertTrue(gsc.getProcessingUnitInstances().length == 0 || gsc.getProcessingUnitInstances().length == 1);
+		}
+	}
 }
