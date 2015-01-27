@@ -229,7 +229,7 @@
                     <artifactId>gs-openspaces-jetty</artifactId>
                     <version>${gsVersion}</version>
                     <scope>system</scope>
-                    <systemPath>${xap.home}/lib/platform/openspaces/gs-openspaces-jetty.jar</systemPath>
+                    <systemPath>${build.home}/lib/platform/openspaces/gs-openspaces-jetty.jar</systemPath>
                 </dependency>
             </dependencies>
         </profile>
