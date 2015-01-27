@@ -91,9 +91,12 @@ public class DeploymentUtils {
 
     public static String getSGTestVersion() {
         String versionFromSystem = System.getProperty(SGTEST_VERSION_PROP);
+        LogUtils.log("version from sys prop sgtest.version is " + versionFromSystem);
         if (versionFromSystem == null) {
             String versionFromFile = loadPropertiesFromClasspath("sgtest.properties").getProperty(SGTEST_VERSION_PROP);
+            LogUtils.log("version from sgtest.properties is " + versionFromFile);
             if (versionFromFile == null) {
+                LogUtils.log("using static version " + STATIC_SGTEST_VERSION);
                 return STATIC_SGTEST_VERSION;
             } else {
                 return versionFromFile;
