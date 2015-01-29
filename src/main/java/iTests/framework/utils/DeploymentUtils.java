@@ -9,7 +9,7 @@ import java.util.Properties;
 public class DeploymentUtils {
 
     private static final String SGTEST_VERSION_PROP = "sgtest.version";
-    private static final String STATIC_SGTEST_VERSION = "3.0.0-SNAPSHOT";
+    private static final String STATIC_SGTEST_VERSION = "9.7.2-SNAPSHOT";
 
     /**
      * @param appName
