@@ -298,7 +298,10 @@ public class AdminUtils {
 			GridServiceContainerOptions options) {
         LogUtils.log("Starting GSC " + toString(options));
 		GridServiceContainer container = gsa.startGridServiceAndWait(options);
-		
+        //added validation to detect sporadic NPE
+        if (container == null) {
+            throw new IllegalStateException("container is null");
+        }
 		//added validation to detect sporadic NPE
 		if (container.getVirtualMachine() == null) {
 			throw new IllegalStateException("container.getVirtualMachine() is null");
