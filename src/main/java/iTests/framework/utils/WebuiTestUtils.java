@@ -127,6 +127,10 @@ public class WebuiTestUtils{
 
 	public void close() throws Exception{
 		killWebServices();
+        if (admin != null) {
+            admin.close();
+            admin = null;
+        }
 	}
 
 	public GridServiceManager getWebuiManagingGsm() {
