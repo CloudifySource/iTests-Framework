@@ -14,27 +14,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SSHUtils {
-    
+
     public static class SSHExecutor implements Runnable {
-        
+
         JSch jsch = null;
         Session session;
         Channel channel;
         InputStream commandInputStream;
         StringBuilder sb = new StringBuilder();
-        
+
         String username;
         String host;
         String password;
         String command;
-        
+
         public SSHExecutor(String username, String host, String password) {
             this.username = username;
             this.host = host;
             this.password = password;
             jsch = new JSch();
         }
-        
+
         public void open() {
             try {
                 session = jsch.getSession(username , host, 22);
@@ -45,7 +45,7 @@ public class SSHUtils {
                 Assert.fail();
             }
         }
-    
+
         public void exec() {
             try {
                 channel = session.openChannel("exec");
@@ -58,19 +58,19 @@ public class SSHUtils {
                 Assert.fail();
             }
         }
-        
+
         public void close() {
             channel.disconnect();
             session.disconnect();
         }
-        
+
         public void openExecuteAndClose() {
             open();
             exec();
             getCommandOutput();
             close();
         }
-        
+
         public String getCommandOutput() {
             try {
                 byte[] tmp = new byte[1024];
@@ -89,11 +89,11 @@ public class SSHUtils {
                 }
                 return sb.toString();}
             catch (Exception e) {
-               Assert.fail("Failed to get ssh command output", e);
+                Assert.fail("Failed to get ssh command output", e);
             }
             return "";
         }
-        
+
         public void setCommand(String command) {
             this.command = command;
         }
@@ -115,24 +115,24 @@ public class SSHUtils {
                     if (channel.isClosed()) {
                         break;
                     }
-                    Thread.sleep(1000);  
+                    Thread.sleep(1000);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        
-        
+
+
         /***
-         * 
+         *
          * @return PID of running gsc/gsm/... (not a general use method)
          * @throws java.io.IOException
          * @throws InterruptedException
          */
         public int getJavaProcessID() {
             String scriptOutput = sb.toString();
-            int pid = -1; 
-            
+            int pid = -1;
+
             //This regular expression captures the script's pid
             String regex = "(?:Log file:.+-)([0-9]+)(?:\\.log)";
             Pattern pattern = Pattern.compile(regex);
@@ -143,9 +143,9 @@ public class SSHUtils {
             return pid;
         }
     }
-    
+
     public static class SSHFileCopy {
-        
+
         private JSch jsch = null;
         private Session session;
         private Channel channel;
@@ -158,7 +158,7 @@ public class SSHUtils {
         private final String host;
         private final String password;
         private final String remotePath;
-        
+
         public SSHFileCopy(String username, String host, String password, String localPath, String remotePath) {
             this.username = username;
             this.host = host;
@@ -167,14 +167,14 @@ public class SSHUtils {
             this.remotePath = remotePath;
             jsch = new JSch();
         }
-        
+
         public void open() throws JSchException {
             session = jsch.getSession(username , host, 22);
             UserInfo ui = new MyUserInfo(password);
             session.setUserInfo(ui);
             session.connect();
         }
-        
+
         public void copy() throws Exception {
             // exec 'scp -t rfile' remotely
             String command = "scp -p -t " + remotePath;
@@ -227,18 +227,18 @@ public class SSHUtils {
             }
             channelOut.close();
         }
-        
+
         public void close() {
             channel.disconnect();
             session.disconnect();
         }
-        
+
         public void openCopyAndClose() throws Exception {
             open();
             copy();
             close();
         }
-        
+
         static int checkAck(InputStream in) throws IOException {
             int b = in.read();
             // b may be 0 for success,
@@ -266,13 +266,13 @@ public class SSHUtils {
             }
             return b;
         }
-        
+
     }
-    
+
     private static class MyUserInfo implements UserInfo {
-        
+
         private final String password;
-        
+
         MyUserInfo(String password) {
             this.password = password;
         }
@@ -290,42 +290,42 @@ public class SSHUtils {
         @Override
         public void showMessage(String m) { }
     }
- 
+
     @SuppressWarnings("serial")
     private static class SSHException extends Exception
     {
-    	private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
     }
 
-	public static final long DEFAULT_TIMEOUT = 60 * 1000;
-	public static final String SSH_USERNAME = "tgrid";
-	public static final String SSH_PASSWORD = "tgrid";
+    public static final long DEFAULT_TIMEOUT = 60 * 1000;
+    public static final String SSH_USERNAME = "tgrid";
+    public static final String SSH_PASSWORD = "tgrid";
 
-    /* 
-     * Kill process on a linux machine (lab) by passing its PID. Will ignore requests on different machines 
+    /*
+     * Kill process on a linux machine (lab) by passing its PID. Will ignore requests on different machines
      * (i.e: windows)
      */
     public static boolean killProcess(String ipAddress, int pid) {
-        
+
         String labPrefix = SetupUtils.LINUX_HOST_PREFIX;
         if (!ipAddress.startsWith(labPrefix)) {
             return false;
         }
-        
+
         long timeoutMilliseconds = 60 * 1000;
         String username = SetupUtils.USERNAME;
         String password = SetupUtils.PASSWORD;
         String command = "kill -9 " + pid;
-        
+
         runCommand(ipAddress, timeoutMilliseconds, command, username, password);
-        
+
         return true;
     }
-    
-    public static void waitForSSH(String ipAddress,
-            String username, String password, long timeout, TimeUnit unit) throws ElasticMachineProvisioningException, InterruptedException{
 
-        long timestamp = System.currentTimeMillis() + unit.toMillis(timeout); 
+    public static void waitForSSH(String ipAddress,
+                                  String username, String password, long timeout, TimeUnit unit) throws ElasticMachineProvisioningException, InterruptedException{
+
+        long timestamp = System.currentTimeMillis() + unit.toMillis(timeout);
         String result = "";
         while (!result.contains("ping")) {
             try {
@@ -341,12 +341,17 @@ public class SSHUtils {
     }
 
     public static String runCommand(String ipAddress, long timeoutMilliseconds, String command,
-            String username, String password) {
-    	return runCommand(ipAddress, timeoutMilliseconds, command, username, password, false);
+                                    String username, String password) {
+        return runCommand(ipAddress, timeoutMilliseconds, command, username, password, false);
     }
-    
+
     public static String runCommand(String ipAddress, long timeoutMilliseconds, String command,
-            String username, String password, boolean expectFail) {
+                                    String username, String password, boolean expectFail) {
+        return runCommand(ipAddress,timeoutMilliseconds,command,username,password,expectFail,false);
+    }
+
+    public static String runCommand(String ipAddress, long timeoutMilliseconds, String command,
+                                    String username, String password, boolean expectFail, boolean setUsePty) {
         File output = null;
         try {
             output = File.createTempFile("sshCommand", ".txt");
@@ -366,6 +371,7 @@ public class SSHUtils {
                 task.setUsername(username);
                 task.setPassword(password);
                 task.setTimeout(timeoutMilliseconds);
+                task.setUsePty(setUsePty);
                 task.execute();
                 String response = readFileAsString(output);
                 LogUtils.log(response);
@@ -374,18 +380,18 @@ public class SSHUtils {
                 String failResponse = readFileAsString(output);
                 LogUtils.log(failResponse);
                 if (!expectFail) {
-                	Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage());
+                    Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage());
                 }
                 return failResponse;
             }
         }catch (IOException e){
-        	if (!expectFail) {
-        		Assert.fail("Failed creating temp file.", e);
-        	}
+            if (!expectFail) {
+                Assert.fail("Failed creating temp file.", e);
+            }
         } catch(Exception e) {
-        	if (!expectFail) {
-        		Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress);
-        	}
+            if (!expectFail) {
+                Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress);
+            }
         }
         finally {
             if (output != null){
@@ -443,19 +449,19 @@ public class SSHUtils {
         reader.close();
         return fileData.toString();
     }
-    
+
     public static String runGroovyFile(String host, long timeoutMilliseconds, String username, String password, String groovyFilePath,Admin admin){
-		String path = ScriptUtils.getBuildPath() + "/tools/groovy/bin" ;
-		
-		return SSHUtils.runCommand(host, timeoutMilliseconds,
+        String path = ScriptUtils.getBuildPath() + "/tools/groovy/bin" ;
+
+        return SSHUtils.runCommand(host, timeoutMilliseconds,
                 "export LOOKUPGROUPS='" + StringUtils.arrayToCommaDelimitedString(admin.getGroups()) + "';" +
                         "export LOOKUPLOCATORS='" + StringUtils.arrayToCommaDelimitedString(admin.getLocators()) + "';" +
                         "cd " + path + ";./groovy " + groovyFilePath, username, password);
-	}
-    
+    }
+
     public static void validateSSHUp(String  host, String username, String password) throws JSchException{
-    	JSch jsch = new JSch();
-    	Session session = jsch.getSession(username , host, 22);
+        JSch jsch = new JSch();
+        Session session = jsch.getSession(username , host, 22);
         UserInfo ui = new MyUserInfo(password);
         session.setUserInfo(ui);
         session.connect();
