@@ -420,6 +420,11 @@ public class CommandTestUtils {
     }
 
     public static String buildAgentCommand(String startupCommand, String lookupGroup, Admin admin, Logger logger) {
+        return buildAgentCommand(startupCommand, lookupGroup, admin, logger, false);
+    }
+
+    public static String buildAgentCommand(String startupCommand, String lookupGroup, Admin admin, Logger logger, boolean isBlobstoreAgent) {
+
 
         String groupToUse;
 
@@ -439,7 +444,7 @@ public class CommandTestUtils {
         String setLookupGroupCommand = "LOOKUPGROUPS=" + groupToUse;
         String exportLookupGroups = "export LOOKUPGROUPS";
         String buildPath = SGTestHelper.getBuildDir();
-        String pathToAgent = buildPath + "/bin/gs-agent.sh";
+        String pathToAgent = isBlobstoreAgent?  buildPath + "/bin/gs-agent-blobstore.sh" : buildPath + "/bin/gs-agent.sh";
         String deployAndWorkDir ="";
         String work, deploy;
         if((work = System.getProperty("com.gs.work")) != null && (deploy = System.getProperty("com.gs.deploy")) != null){
