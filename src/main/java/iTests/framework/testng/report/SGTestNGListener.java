@@ -52,7 +52,7 @@ public class SGTestNGListener extends TestListenerAdapter {
 
     @Override
     public void onStart(ITestContext iTestContext) {
-    	suiteName = System.getProperty("iTests.suiteName");
+    	suiteName = System.getProperty("iTests.suiteName", "sgtest");
         LogUtils.log("suite number is now (on start) - " + suiteName);
 
         if(enableLogstash){
@@ -154,7 +154,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         if(enableLogstash){
             super.beforeConfiguration(tr);
             if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
-                suiteName = System.getProperty("iTests.suiteName");
+                suiteName = System.getProperty("iTests.suiteName", "sgtest");
                 buildNumber = System.getProperty("iTests.buildNumber");
                 LogUtils.log("build number is now - " + buildNumber);
                 version = System.getProperty("cloudifyVersion");
@@ -172,7 +172,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         	testName = testMethodName;
         }
         if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
-        	suiteName = System.getProperty("iTests.suiteName");
+        	suiteName = System.getProperty("iTests.suiteName", "sgtest");
         }
         LogUtils.log("Configuration Succeeded: " + configurationName);
 
@@ -210,7 +210,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         	testName = testMethodName;
         }
         if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
-        	suiteName = System.getProperty("iTests.suiteName");
+        	suiteName = System.getProperty("iTests.suiteName", "sgtest");
         }
         LogUtils.log("Configuration Failed: " + configurationName, iTestResult.getThrowable());
 
@@ -328,6 +328,8 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onFinish(ITestContext testContext) {
         super.onFinish(testContext);
+        if(suiteName == null)
+            suiteName = System.getProperty("iTests.suiteName", "sgtest");
         LogUtils.log("Finishing Suite: "+suiteName.toLowerCase());
         if (suiteName.toLowerCase().contains("webui")){
             onFinishWebUITests(testContext);

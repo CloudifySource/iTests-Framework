@@ -9,15 +9,15 @@
     <properties>
         <build.home>${env.BUILD_HOME}</build.home>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gsVersion>10.1.1-12800-RELEASE</gsVersion>
+        <gsVersion>10.2.0-SNAPSHOT</gsVersion>
         <cloudifyVersion>2.7.1-SNAPSHOT</cloudifyVersion>
-        <springVersion>3.1.1.RELEASE</springVersion>
+        <springVersion>4.1.1.RELEASE</springVersion>
         <hibernateVersion>4.1.9.Final</hibernateVersion>
         <jcloudsVersion>1.6.0</jcloudsVersion>
     </properties>
 
     <groupId>iTests.framework</groupId>
-    <version>1.0.54-SNAPSHOT</version>
+    <version>1.0.55-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
