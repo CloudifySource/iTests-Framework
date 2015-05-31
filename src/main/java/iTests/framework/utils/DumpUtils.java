@@ -97,9 +97,9 @@ public class DumpUtils {
     public static File createTestFolder(String testName, String suiteName) {
         String newmanTestFolder = System.getProperty("newman.test.path");
         if(newmanTestFolder != null){
-            File newmanFolder = new File(newmanTestFolder);
-            LogUtils.log("Newman Folder : --> " + newmanFolder.getAbsolutePath());
-            return newmanFolder;
+            File testFolder = new File(newmanTestFolder);
+            LogUtils.log("Newman Folder : --> " + testFolder.getAbsolutePath());
+            return testFolder;
         }
 
         String buildNumber = PlatformVersion.getBuildNumber();
@@ -121,6 +121,12 @@ public class DumpUtils {
     }
 
     public static File getTestFolder() {
+        String newmanTestFolder = System.getProperty("newman.test.path");
+        if(newmanTestFolder != null){
+            File testFolder = new File(newmanTestFolder);
+            LogUtils.log("Newman Folder : --> " + testFolder.getAbsolutePath());
+            return testFolder;
+        }
         if (testFolder == null) {
             File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" +
                     PlatformVersion.getBuildNumber());
