@@ -95,6 +95,13 @@ public class DumpUtils {
     }
 
     public static File createTestFolder(String testName, String suiteName) {
+        String newmanTestFolder = System.getProperty("newman.test.path");
+        if(newmanTestFolder != null){
+            File newmanFolder = new File(newmanTestFolder);
+            LogUtils.log("Newman Folder : --> " + newmanFolder.getAbsolutePath());
+            return newmanFolder;
+        }
+
         String buildNumber = PlatformVersion.getBuildNumber();
         if (buildNumber == null) {
             return null;
