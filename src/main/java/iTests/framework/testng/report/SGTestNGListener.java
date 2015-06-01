@@ -3,6 +3,7 @@ package iTests.framework.testng.report;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.*;
 import iTests.framework.utils.TestNGUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
@@ -11,10 +12,7 @@ import org.apache.commons.vfs2.impl.DefaultFileMonitor;
 import org.jruby.embed.ScriptingContainer;
 import org.testng.*;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -180,7 +178,18 @@ public class SGTestNGListener extends TestListenerAdapter {
             initLogstash2(iTestResult);
         }
 
-        ZipUtils.unzipArchive(testMethodName, suiteName);
+        String newmanTestFolder = System.getProperty("newman.test.path");
+        if(newmanTestFolder != null){
+            File testFolder = new File(newmanTestFolder);
+            ZipUtils.unzipArchive(testFolder);
+            try {
+                copyAllFilesToLogDir(testFolder, testFolder);
+            } catch (IOException e) {
+                LogUtils.log("Failed to copy all log files");
+            }
+        }else {
+            ZipUtils.unzipArchive(testMethodName, suiteName);
+        }
 
         if (enableLogstash && isAfter(iTestResult) && !iTestResult.getMethod().isAfterClassConfiguration() && !iTestResult.getMethod().isAfterSuiteConfiguration()) {
             testName = testMethodName;
@@ -218,7 +227,18 @@ public class SGTestNGListener extends TestListenerAdapter {
             initLogstash2(iTestResult);
         }
 
-        ZipUtils.unzipArchive(testMethodName, suiteName);
+        String newmanTestFolder = System.getProperty("newman.test.path");
+        if(newmanTestFolder != null){
+            File testFolder = new File(newmanTestFolder);
+            ZipUtils.unzipArchive(testFolder);
+            try {
+                copyAllFilesToLogDir(testFolder, testFolder);
+            } catch (IOException e) {
+                LogUtils.log("Failed to copy all log files");
+            }
+        }else {
+            ZipUtils.unzipArchive(testMethodName, suiteName);
+        }
 
         if (enableLogstash && isAfter(iTestResult) && !iTestResult.getMethod().isAfterClassConfiguration() && !iTestResult.getMethod().isAfterSuiteConfiguration()) {
             testName = testMethodName;
@@ -252,7 +272,18 @@ public class SGTestNGListener extends TestListenerAdapter {
             initLogstash2(iTestResult);
         }
 
-        ZipUtils.unzipArchive(testMethodName, suiteName);
+        String newmanTestFolder = System.getProperty("newman.test.path");
+        if(newmanTestFolder != null){
+            File testFolder = new File(newmanTestFolder);
+            ZipUtils.unzipArchive(testFolder);
+            try {
+                copyAllFilesToLogDir(testFolder, testFolder);
+            } catch (IOException e) {
+                LogUtils.log("Failed to copy all log files");
+            }
+        }else {
+            ZipUtils.unzipArchive(testMethodName, suiteName);
+        }
 
         if (enableLogstash && isAfter(iTestResult) && !iTestResult.getMethod().isAfterClassConfiguration() && !iTestResult.getMethod().isAfterSuiteConfiguration()) {
             testName = testMethodName;
@@ -503,6 +534,23 @@ public class SGTestNGListener extends TestListenerAdapter {
             throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
         }
         logstashHost = props.getProperty("logstash_server_host");
+    }
+
+    private void copyAllFilesToLogDir(File node, File parent) throws IOException {
+        if(!node.getAbsoluteFile().equals(parent.getAbsoluteFile())
+                && node.isFile()
+                && !node.getParentFile().equals(parent)){
+            FileUtils.copyFileToDirectory(node, parent);
+            FileUtils.deleteDirectory(node.getParentFile());
+            FileUtils.deleteDirectory(node.getParentFile().getParentFile());
+        }
+        if(node.isDirectory()){
+            String[] subNote = node.list();
+            for(String filename : subNote){
+                copyAllFilesToLogDir(new File(node, filename), parent);
+            }
+        }
+
     }
 
 }

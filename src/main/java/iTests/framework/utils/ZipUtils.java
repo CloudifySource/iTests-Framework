@@ -31,6 +31,20 @@ public class ZipUtils {
         }
     }
 
+    public static void unzipArchive(File testFolder) {
+        File[] children = testFolder.listFiles();
+        if (children == null)
+            return;
+        for (int n = 0; n < children.length; n++) {
+            File file = children[n];
+            if (file.getName().contains(".zip")) {
+                LogUtils.log("unzipping file [ " + file.getName() + " ]");
+                unzipArchive(file, testFolder.getAbsoluteFile());
+                file.delete();
+            }
+        }
+    }
+
     public static void unzipArchive(File archive, File outputDir) {
         try {
             ZipFile zipfile = new ZipFile(archive);
