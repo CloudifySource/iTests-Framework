@@ -185,7 +185,7 @@ public class SGTestNGListener extends TestListenerAdapter {
             try {
                 copyAllFilesToLogDir(testFolder, testFolder);
             } catch (IOException e) {
-                LogUtils.log("Failed to copy all log files");
+                LogUtils.log("Failed to copy all log files - caught " + e, e);
             }
         }else {
             ZipUtils.unzipArchive(testMethodName, suiteName);
@@ -537,17 +537,24 @@ public class SGTestNGListener extends TestListenerAdapter {
     }
 
     private void copyAllFilesToLogDir(File node, File parent) throws IOException {
-        if(!node.getAbsoluteFile().equals(parent.getAbsoluteFile())
+        if (!node.getAbsoluteFile().equals(parent.getAbsoluteFile())
                 && node.isFile()
-                && !node.getParentFile().equals(parent)){
-            FileUtils.copyFileToDirectory(node, parent);
-            FileUtils.deleteDirectory(node.getParentFile());
-            FileUtils.deleteDirectory(node.getParentFile().getParentFile());
+                && !node.getParentFile().equals(parent)) {
+            String fileNamePrefix = node.getName().substring(0, node.getName().lastIndexOf('.'));
+            String fileNameSuffix = node.getName().substring(node.getName().lastIndexOf('.'));
+            String newFilePath = node.getParentFile().getAbsolutePath() + File.separator + fileNamePrefix.replace(".", "_") + fileNameSuffix;
+
+            File newNode = new File(newFilePath);
+            node.renameTo(newNode);
+            FileUtils.copyFileToDirectory(newNode, parent);
         }
-        if(node.isDirectory()){
+        if (node.isDirectory()) {
             String[] subNote = node.list();
-            for(String filename : subNote){
+            for (String filename : subNote) {
                 copyAllFilesToLogDir(new File(node, filename), parent);
+            }
+            if (!node.equals(parent)) {
+                FileUtils.deleteDirectory(node);
             }
         }
 
