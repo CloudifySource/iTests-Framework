@@ -16,6 +16,7 @@ import java.util.List;
 * How to start wanem on 192.168.9.197:
 * reboot the machine (called WANem on xen server), on startup refuse DHCP.
 * on ip prompt enter 192.168.9.197 and skip everything else.
+* run WANemUtils.main() to configure routing tables on disconnect machines
 */
 public class WANemUtils {
 	
@@ -226,8 +227,11 @@ public class WANemUtils {
         return "sudo /sbin/route del -host " + dstIP + " netmask 0.0.0.0 gw " + routeThroughIP;
     }
 
-//    public static void main(String[] args) {
-//        String[] ips = {"pc-lab105","pc-lab106","pc-lab107","pc-lab108"};
-//        addRoutingTableEntries(ips);
-//    }
+	/*
+	   Run this main to configure the routing tables on the disconnect machines
+	 */
+    public static void main(String[] args) {
+        String[] ips = {"pc-lab105","pc-lab106","pc-lab107","pc-lab108"};
+        addRoutingTableEntries(ips);
+    }
 }
