@@ -22,33 +22,6 @@ public class DeploymentUtils {
         return null;
     }
 
-    /**
-     * Ever since we changed the pu instance work directory to include some guid suffix
-     * this method does not work accurately if a pu with the same name was deployed more than once
-     * and not cleaned properly
-     */
-    @Deprecated
-    public static File getProcessingUnitInstanceWorkDirectory(String puName, int id) {
-        String puInstanceFolderPrefix = (puName + "_" + id + "_").replace('.', '_');
-
-        String workDirProp = System.getProperty("com.gs.work",
-                ScriptUtils.getBuildPath() + "/work");
-
-        File processingUnitsDir = new File(workDirProp, "processing-units");
-        if (!processingUnitsDir.isDirectory()) {
-            Assert.fail("Could not locate processing-units directory");
-        }
-
-        for (File dir : processingUnitsDir.listFiles()) {
-            if (dir.getName().startsWith(puInstanceFolderPrefix)) {
-                return dir;
-            }
-        }
-
-        Assert.fail("Could not locate processing unit instance directory for " + puInstanceFolderPrefix);
-        return null;
-    }
-
     public static void setPUSLCache(String appStr, String puStr) throws IOException {
 
         String path;
