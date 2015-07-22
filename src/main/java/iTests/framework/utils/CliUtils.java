@@ -220,6 +220,12 @@ public class CliUtils {
         
         public GsMainWrapper(String ... args) {
             commandArguments = new String[1 + args.length];
+            if(SGTestHelper.isXap()){
+                REQUIERED_ARGUMENT = "config/services/services.config";
+            }
+            else{
+                REQUIERED_ARGUMENT = "config/tools/gs_cli.config";
+            }
             commandArguments[0] = REQUIERED_ARGUMENT;
             for (int i = 1; i < commandArguments.length; i++) {
                 commandArguments[i] = args[i-1];
