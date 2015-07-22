@@ -37,6 +37,15 @@ public class DeploymentUtils {
         copyFile(srcFile, destFile);
     }
 
+    public static File getWebProcessingUnit(String app, String pu) {
+        String s = System.getProperty("file.separator");
+        String pathToJar = app + s + pu + s + getSGTestVersion() + s;
+        if (app.equals(pu)) {
+            pathToJar = pu + s + getSGTestVersion() + s;
+        }
+        return new File(getAppsPath(s) + pathToJar + pu + "-" + getSGTestVersion() + ".war");
+    }
+
     public static File getProcessingUnit(String app, String pu) {
         String s = System.getProperty("file.separator");
         String pathToJar = app + s + pu + s + getSGTestVersion() + s;
