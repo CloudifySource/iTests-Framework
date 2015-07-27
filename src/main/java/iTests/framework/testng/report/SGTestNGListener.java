@@ -243,7 +243,9 @@ public class SGTestNGListener extends TestListenerAdapter {
         if (enableLogstash && isAfter(iTestResult) && !iTestResult.getMethod().isAfterClassConfiguration() && !iTestResult.getMethod().isAfterSuiteConfiguration()) {
             testName = testMethodName;
         }
-        write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
+        File testFolder = DumpUtils.createTestFolder(testName, suiteName);
+        write2LogFile(iTestResult, testFolder);
+        write2ErrorTxtFile(iTestResult, testFolder);
 
         if (isAfter(iTestResult)) {
             if(enableLogstash){
@@ -326,13 +328,17 @@ public class SGTestNGListener extends TestListenerAdapter {
                 testInvocationCounter = 1;
                 testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
                 LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
-                write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
+                File testFolder = DumpUtils.createTestFolder(testMethodName, suiteName);
+                write2LogFile(iTestResult, testFolder);
+                write2ErrorTxtFile(iTestResult, testFolder);
             }
         }
         else {
             testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
             LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
-            write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
+            File testFolder = DumpUtils.createTestFolder(testMethodName, suiteName);
+            write2LogFile(iTestResult, testFolder);
+            write2ErrorTxtFile(iTestResult, testFolder);
         }
         super.onTestFailure(iTestResult);
     }
@@ -361,7 +367,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         super.onFinish(testContext);
         if(suiteName == null)
             suiteName = System.getProperty("iTests.suiteName", "sgtest");
-        LogUtils.log("Finishing Suite: "+suiteName.toLowerCase());
+        LogUtils.log("Finishing Suite: " + suiteName.toLowerCase());
         if (suiteName.toLowerCase().contains("webui")){
             onFinishWebUITests(testContext);
         }
@@ -426,6 +432,29 @@ public class SGTestNGListener extends TestListenerAdapter {
             new RuntimeException(e);
         } finally {
             SGTestNGReporter.reset();
+        }
+    }
+
+    private void write2ErrorTxtFile(ITestResult iTestResult, File testFolder) {
+        if (testFolder == null) {
+            LogUtils.log("Can not write error.txt - test folder is null");
+            return;
+        }
+        if (iTestResult.getThrowable() == null) {
+            LogUtils.log("nothing to write to error.txt - throwable is null");
+            return;
+        }
+        File errorTxtFile = new File(testFolder.getAbsolutePath(), "error.txt");
+        PrintWriter out = null;
+        try {
+            out = new PrintWriter(new BufferedWriter(new FileWriter(errorTxtFile, true)));
+            out.println(iTestResult.getThrowable());
+        } catch (IOException ioe) {
+            LogUtils.log("Failed to write contents into error.txt file", ioe);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
         }
     }
     
