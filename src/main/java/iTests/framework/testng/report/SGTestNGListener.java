@@ -444,6 +444,12 @@ public class SGTestNGListener extends TestListenerAdapter {
             LogUtils.log("nothing to write to error.txt - throwable is null");
             return;
         }
+        //trim if too long
+        String errorMsg = iTestResult.getThrowable().toString();
+        if (errorMsg.length() > 120) {
+            errorMsg = errorMsg.substring(0, 120 -3) + "...";
+        }
+
         File errorTxtFile = new File(testFolder.getAbsolutePath(), "error.txt");
         PrintWriter out = null;
         try {
