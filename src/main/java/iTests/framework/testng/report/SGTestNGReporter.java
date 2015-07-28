@@ -20,7 +20,7 @@ public class SGTestNGReporter {
         output.delete(0, output.length());
     }
 
-    public static void log(String s, Throwable t, boolean logToStandardOut) {
+    public static synchronized void log(String s, Throwable t, boolean logToStandardOut) {
         int startIdx = output.length();
         output.append(getCurrentTime()).append(" - ").append(s);
         if (t != null) {
