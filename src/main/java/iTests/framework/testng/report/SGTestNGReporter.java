@@ -5,18 +5,17 @@ import com.j_spaces.kernel.JSpaceUtilities;
 import java.text.DateFormat;
 import java.util.Date;
 
-@Deprecated
 public class SGTestNGReporter {
     /**
      * All output logged in a sequential order.
      */
-    private static StringBuilder output = new StringBuilder();
+    private static final StringBuilder output = new StringBuilder();
 
     public static String getOutput() {
         return output.toString();
     }
 
-    public static void reset() {
+    public static synchronized void reset() {
         output.delete(0, output.length());
     }
 

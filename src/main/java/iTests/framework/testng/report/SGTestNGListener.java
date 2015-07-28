@@ -1,5 +1,6 @@
 package iTests.framework.testng.report;
 
+import com.gigaspaces.internal.utils.StringUtils;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.*;
 import iTests.framework.utils.TestNGUtils;
@@ -28,10 +29,6 @@ public class SGTestNGListener extends TestListenerAdapter {
     protected ScriptingContainer container;
     private Process process = null;
     private Process process2 = null;
-    private String confFilePath;
-    private String confFilePath2;
-    private String backupFilePath;
-    private String backupFilePath2;
     private String logstashLogPath;
     private String logstashLogPath2;
     private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
@@ -66,8 +63,8 @@ public class SGTestNGListener extends TestListenerAdapter {
 
         String simpleClassName = tr.getTestClass().getRealClass().getSimpleName();
         String pathToLogstash = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/logstash";
-        confFilePath2 = pathToLogstash + "/logstash-shipper-client-2.conf";
-        backupFilePath2 = pathToLogstash + "/logstash-shipper-client-2-" + simpleClassName + ".conf";
+        String confFilePath2 = pathToLogstash + "/logstash-shipper-client-2.conf";
+        String backupFilePath2 = pathToLogstash + "/logstash-shipper-client-2-" + simpleClassName + ".conf";
         File backupFile2 = new File(backupFilePath2);
 
         LogUtils.log("trying to start logstash agent number 2. simple class name is " + simpleClassName);
@@ -112,9 +109,9 @@ public class SGTestNGListener extends TestListenerAdapter {
         initLogstashHost();
 
         String pathToLogstash = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/logstash";
-        confFilePath = pathToLogstash + "/logstash-shipper-client.conf";
+        String confFilePath = pathToLogstash + "/logstash-shipper-client.conf";
         String fixedTestName = testName.substring(0, testName.length() - 2);
-        backupFilePath = pathToLogstash + "/logstash-shipper-client-" + fixedTestName + ".conf";
+        String backupFilePath = pathToLogstash + "/logstash-shipper-client-" + fixedTestName + ".conf";
 
         if(process == null){
 
@@ -371,6 +368,11 @@ public class SGTestNGListener extends TestListenerAdapter {
         if (suiteName.toLowerCase().contains("webui")){
             onFinishWebUITests(testContext);
         }
+        try {
+            SGTestNGReporter.reset();
+        } catch (Exception e) {
+            //ignore
+        }
     }
 
     private void onFinishWebUITests(ITestContext testContext){
@@ -413,25 +415,37 @@ public class SGTestNGListener extends TestListenerAdapter {
     }
 
     private void write2LogFile(ITestResult iTestResult, File testFolder) {
+        BufferedWriter out = null;
         try {
             if(testFolder == null){
                 LogUtils.log("Can not write to file test folder is null");
                 return;
             }
+            String output = SGTestNGReporter.getOutput();
+            if (StringUtils.isEmpty(output)) {
+                LogUtils.log("nothing to write to log file");
+                return;
+            }
             String parameters = TestNGUtils.extractParameters(iTestResult);
             File testLogFile = new File(testFolder.getAbsolutePath() + "/" + iTestResult.getName() + "(" + parameters + ").log");
             if (!testLogFile.createNewFile()) {
-                new RuntimeException("Failed to create log file [" + testLogFile + "];\n log output: " + Reporter.getOutput());
+                LogUtils.log("Failed to create log file [" + testLogFile + "];\n log output: " + Reporter.getOutput());
+                return;
             }
             FileWriter fstream = new FileWriter(testLogFile);
-            BufferedWriter out = new BufferedWriter(fstream);
-            String output = SGTestNGReporter.getOutput();
+            out = new BufferedWriter(fstream);
             out.write(output);
-            out.close();
         } catch (Exception e) {
-            new RuntimeException(e);
+            LogUtils.log("Failed to write to log file result - " + iTestResult, e);
         } finally {
-            SGTestNGReporter.reset();
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    LogUtils.log("Failed closing stream", e);
+                    //ignore
+                }
+            }
         }
     }
 
@@ -440,11 +454,13 @@ public class SGTestNGListener extends TestListenerAdapter {
             LogUtils.log("Can not write error.txt - test folder is null");
             return;
         }
+        //noinspection ThrowableResultOfMethodCallIgnored
         if (iTestResult.getThrowable() == null) {
             LogUtils.log("nothing to write to error.txt - throwable is null");
             return;
         }
         //trim if too long
+        //noinspection ThrowableResultOfMethodCallIgnored
         String errorMsg = iTestResult.getThrowable().toString();
         if (errorMsg.length() > 120) {
             errorMsg = errorMsg.substring(0, 120 -3) + "...";
@@ -454,7 +470,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         PrintWriter out = null;
         try {
             out = new PrintWriter(new BufferedWriter(new FileWriter(errorTxtFile, true)));
-            out.println(iTestResult.getThrowable());
+            out.println(errorMsg);
         } catch (IOException ioe) {
             LogUtils.log("Failed to write contents into error.txt file", ioe);
         } finally {
@@ -519,7 +535,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         LogUtils.log("waited " + (endTimeMillis - startTimeMillis)/1000 + " seconds");
         fm.stop();
 
-        File logstashOutputFile = new File(logstashLogPath);
+//        File logstashOutputFile = new File(logstashLogPath);
 
         if(logAgentNumber == 1){
 
@@ -532,24 +548,24 @@ public class SGTestNGListener extends TestListenerAdapter {
             process2 = null;
         }
 
-        try {
-            TimeUnit.SECONDS.sleep(5);
-
-            LogUtils.log("returning logstash config file to initial state");
-            if(logAgentNumber == 1){
+//        try {
+//            TimeUnit.SECONDS.sleep(5);
+//
+//            LogUtils.log("returning logstash config file to initial state");
+//            if(logAgentNumber == 1){
 //                IOUtils.replaceFileWithMove(new File(confFilePath), new File(backupFilePath));
 //                FileUtils.deleteQuietly(new File(backupFilePath));
-            }
-            else{
+//            }
+//            else{
 //                IOUtils.replaceFileWithMove(new File(confFilePath2), new File(backupFilePath2));
 //                FileUtils.deleteQuietly(new File(backupFilePath2));
-
-            }
+//
+//            }
 //        } catch (IOException e) {
 //            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 //        if(logstashOutputFile.exists()){
 //            FileUtils.deleteQuietly(logstashOutputFile);
@@ -580,8 +596,9 @@ public class SGTestNGListener extends TestListenerAdapter {
             String newFilePath = node.getParentFile().getAbsolutePath() + File.separator + fileNamePrefix.replace(".", "_") + fileNameSuffix;
 
             File newNode = new File(newFilePath);
-            node.renameTo(newNode);
-            FileUtils.copyFileToDirectory(newNode, parent);
+            if (node.renameTo(newNode)) {
+                FileUtils.copyFileToDirectory(newNode, parent);
+            }
         }
         if (node.isDirectory()) {
             String[] subNote = node.list();
