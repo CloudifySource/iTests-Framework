@@ -298,8 +298,8 @@ public class SSHUtils {
     }
 
     public static final long DEFAULT_TIMEOUT = 60 * 1000;
-    public static final String SSH_USERNAME = "tgrid";
-    public static final String SSH_PASSWORD = "tgrid";
+    public static final String SSH_USERNAME = System.getProperty("iTests.ssh.username", "tgrid");//"tgrid";
+    public static final String SSH_PASSWORD = System.getProperty("iTests.ssh.password", "tgrid");
 
     /*
      * Kill process on a linux machine (lab) by passing its PID. Will ignore requests on different machines
