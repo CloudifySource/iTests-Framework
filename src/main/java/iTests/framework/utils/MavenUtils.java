@@ -78,43 +78,15 @@ public class MavenUtils {
 	/**
 	 * checks if maven created the my-app folder
 	 * this method will be usually invoked to ensure that maven os:create was successful
-	 * @param hostName - the host on witch the app should be created on
+	 * @param hostName - the host on which the app should be created on
 	 * @return
 	 */
 	public static boolean isAppExists(String hostName, String appName) {
 		String pathName = getBuildPath() + "/../" + appName;
-		File myAppDir = new File(pathName);
-		return myAppDir.isDirectory();	
+		String command = "if [ -d \"" +pathName + "\" ]; then echo 'exist'; fi";
+		return SSHUtils.runCommand(hostName, 10*1000, command, SSHUtils.SSH_USERNAME, SSHUtils.SSH_PASSWORD).contains("exist");
 	}
 
-	/**
-	 * delete the maven repository from the specified machine
-	 * @param machine
-	 */
-	public static void deleteMavenRep(Machine machine,String path) {
-		SSHUtils.runCommand(machine.getHostAddress(), DEFAULT_TEST_TIMEOUT * 2,
-                "cd ~;cd ;rm -rf *", MavenUtils.username, MavenUtils.password);
-	}
-
-    /**
-     * delete the maven repository from the specified machine
-     * @param machine
-     */
-    public static void deleteMavenRep(Machine machine) {
-        SSHUtils.runCommand(machine.getHostAddress(), DEFAULT_TEST_TIMEOUT * 2,
-                "cd ~;cd .m2;rm -rf *", MavenUtils.username, MavenUtils.password);
-    }
-
-    /**
-     * delete the app maven created
-     * @param machine
-     */
-    public static void deleteApp(Machine machine) {
-        String buildPath = ScriptUtils.getBuildPath();
-        SSHUtils.runCommand(machine.getHostAddress(), DEFAULT_TEST_TIMEOUT * 2,
-                "cd " + buildPath + "/..;rm -rf my-app", MavenUtils.username, MavenUtils.password);
-
-    }
 
 	/**
 	 * delete the app maven created
