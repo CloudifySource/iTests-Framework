@@ -24,10 +24,6 @@ public class WANemUtils {
 	private static final int DISCONNECT_TIME = 900;
     private static final String WANEM_IP = "192.168.9.197";
     
-    public static final String SSH_USERNAME = "tgrid";
-    public static final String SSH_PASSWORD = "tgrid";
-    public static final int SSH_TIMEOUT = 60000;
-    
     private static WANemPage page;
 
 	public static void init(){
@@ -202,7 +198,7 @@ public class WANemUtils {
 	}
 
     private static void addRoute(String srcIP, String dstIP) {
-        SSHUtils.runCommand(srcIP, 60000, addRouteCommand(dstIP, WANEM_IP), SSH_USERNAME, SSH_PASSWORD);
+        SSHUtils.runCommand(srcIP, 60000, addRouteCommand(dstIP, WANEM_IP), SSHUtils.SSH_USERNAME, SSHUtils.SSH_PASSWORD);
 
     }
     
@@ -219,7 +215,7 @@ public class WANemUtils {
     }
 
 	private static void removeRoute(String srcIP, String dstIP) {
-        SSHUtils.runCommand(srcIP, 60000, removeRouteCommand(dstIP, WANEM_IP), SSH_USERNAME, SSH_PASSWORD);
+        SSHUtils.runCommand(srcIP, 60000, removeRouteCommand(dstIP, WANEM_IP), SSHUtils.SSH_USERNAME, SSHUtils.SSH_PASSWORD);
 
 	}
 
