@@ -18,8 +18,8 @@ import static iTests.framework.utils.ScriptUtils.getBuildPath;
  */
 public class MavenUtils {
 
-	public static final String username = "tgrid";
-	public static final String password = "tgrid";
+	public static final String username = SSHUtils.SSH_USERNAME;
+	public static final String password = SSHUtils.SSH_PASSWORD;
 	public static String mavenRepLocation;
 	public static final String mavenCreate = "mvn os:create -Dtemplate=";
 	public static final String mavenCompile = "mvn compile";
