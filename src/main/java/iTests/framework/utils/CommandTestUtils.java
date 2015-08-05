@@ -443,6 +443,7 @@ public class CommandTestUtils {
         logger.info("Using group " + groupToUse + " to start services");
         String setLookupGroupCommand = "LOOKUPGROUPS=" + groupToUse;
         String exportLookupGroups = "export LOOKUPGROUPS";
+		String exportNICAddr = "export NIC_ADDR=#local:ip#";
         String buildPath = SGTestHelper.getBuildDir();
         String pathToAgent = isBlobstoreAgent?  buildPath + "/bin/gs-agent-blobstore.sh" : buildPath + "/bin/gs-agent.sh";
         String deployAndWorkDir ="";
@@ -453,7 +454,7 @@ public class CommandTestUtils {
             String exportJavaOptions = "export EXT_JAVA_OPTIONS";
             deployAndWorkDir = setJavaOptionsCommand + ";" + exportJavaOptions + ";";
         }
-        return  deployAndWorkDir + setLookupGroupCommand  + ";" + exportLookupGroups + ";" + pathToAgent + " " + startupCommand;
+        return  deployAndWorkDir + setLookupGroupCommand  + ";" + exportLookupGroups + ";" + exportNICAddr + ";" + pathToAgent + " " + startupCommand;
     }
 
 }
