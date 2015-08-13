@@ -3,6 +3,7 @@ package iTests.framework.utils;
 import com.gigaspaces.internal.utils.StringUtils;
 import com.jcraft.jsch.*;
 import iTests.framework.tools.SGTestHelper;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.optional.ssh.SSHExec;
 import org.openspaces.admin.Admin;
 import org.openspaces.grid.gsm.machines.plugins.exceptions.ElasticMachineProvisioningException;
@@ -365,6 +366,8 @@ public class SSHUtils {
                 else{
                     task.setFailonerror(true); // throw exception if exit code is not 0
                 }
+                task.setVerbose(true);
+
                 task.setCommand(command);
                 task.setHost(ipAddress);
                 task.setTrust(true);
@@ -372,7 +375,9 @@ public class SSHUtils {
                 task.setPassword(password);
                 task.setTimeout(timeoutMilliseconds);
                 task.setUsePty(setUsePty);
-                task.execute();
+
+                repetitiveExecuteTask(task, 5);
+
                 String response = readFileAsString(output);
                 LogUtils.log(response);
                 return response;
@@ -399,6 +404,28 @@ public class SSHUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Try to execute task for a few seconds, if no exception is thrown - returns normally, else throws the exception
+     */
+    private static void repetitiveExecuteTask(SSHExec task, int seconds) {
+        RuntimeException e = null;
+        long timeout = System.currentTimeMillis() + 1000 * seconds;
+        while(System.currentTimeMillis() <= timeout){
+            try {
+                task.execute();
+            }catch (RuntimeException ignore){
+                LogUtils.log("Caught execption: ", ignore);
+                e = ignore;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {}
+            }
+        }
+        if (e != null){
+            throw e;
+        }
     }
 
     public static String runCommand(String ipAddress, long timeoutMilliseconds, String command,
