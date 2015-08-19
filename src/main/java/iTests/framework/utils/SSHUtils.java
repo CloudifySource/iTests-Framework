@@ -366,7 +366,7 @@ public class SSHUtils {
                 else{
                     task.setFailonerror(true); // throw exception if exit code is not 0
                 }
-                task.setVerbose(true);
+                //task.setVerbose(true);
 
                 task.setCommand(command);
                 task.setHost(ipAddress);
@@ -375,8 +375,8 @@ public class SSHUtils {
                 task.setPassword(password);
                 task.setTimeout(timeoutMilliseconds);
                 task.setUsePty(setUsePty);
-
-                repetitiveExecuteTask(task, 5);
+                task.execute();
+                //repetitiveExecuteTask(task, 5);
 
                 String response = readFileAsString(output);
                 LogUtils.log(response);
