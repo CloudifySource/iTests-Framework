@@ -445,7 +445,8 @@ public class CommandTestUtils {
         String exportLookupGroups = "export LOOKUPGROUPS";
 		String exportNICAddr = "export NIC_ADDR=#local:ip#";
         String buildPath = SGTestHelper.getBuildDir();
-        String pathToAgent = isBlobstoreAgent?  buildPath + "/bin/gs-agent-blobstore.sh" : buildPath + "/bin/gs-agent.sh";
+		String pathToAgent = "cd " + buildPath + "/bin";
+        String agentTypeSuffix = isBlobstoreAgent? "./gs-agent-blobstore.sh" :  "./gs-agent.sh";
         String deployAndWorkDir ="";
         String work, deploy;
         if((work = System.getProperty("com.gs.work")) != null && (deploy = System.getProperty("com.gs.deploy")) != null){
@@ -454,7 +455,7 @@ public class CommandTestUtils {
             String exportJavaOptions = "export EXT_JAVA_OPTIONS";
             deployAndWorkDir = setJavaOptionsCommand + ";" + exportJavaOptions + ";";
         }
-        return  deployAndWorkDir + setLookupGroupCommand  + ";" + exportLookupGroups + ";" + exportNICAddr + ";" + pathToAgent + " " + startupCommand;
+        return  deployAndWorkDir + setLookupGroupCommand  + ";" + exportLookupGroups + ";" + exportNICAddr + ";" + pathToAgent + ";" + agentTypeSuffix + " " + startupCommand;
     }
 
 }
