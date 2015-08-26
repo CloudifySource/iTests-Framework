@@ -438,6 +438,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         } catch (Exception e) {
             LogUtils.log("Failed to write to log file result - " + iTestResult, e);
         } finally {
+            SGTestNGReporter.reset();
             if (out != null) {
                 try {
                     out.close();
