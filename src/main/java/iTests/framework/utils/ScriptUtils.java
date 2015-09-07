@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -150,12 +151,13 @@ public class ScriptUtils {
         }
 
         public RunScript(String args, boolean relativeToGigaspacesBinDir) {
-
+            LogUtils.log( "RunScript initialized with args [" + args + "], relativeToGigaspacesBinDir=" + relativeToGigaspacesBinDir );
             this.sb = new StringBuilder();
             this.args = args.split(" ");
             String binPath = null;
             if (relativeToGigaspacesBinDir) {
                 binPath = getBuildBinPath();
+                LogUtils.log( "binPath [" + binPath + "]" );
                 if (this.args[0].endsWith(getScriptSuffix())){
                     this.args[0] = binPath + "/" + this.args[0];
                 }
@@ -169,6 +171,7 @@ public class ScriptUtils {
                 if (!this.args[0].endsWith(getScriptSuffix())){
                     this.args[0] += getScriptSuffix();
                 }
+                LogUtils.log( "this.args [" + Arrays.toString(this.args) + "]" );
                 this.processBuilder = new ProcessBuilder(this.args)
                         .redirectErrorStream(true);
             }
