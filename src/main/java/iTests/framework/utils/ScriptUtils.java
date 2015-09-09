@@ -165,8 +165,7 @@ public class ScriptUtils {
                     this.args[0] = binPath + "/" + this.args[0] + getScriptSuffix();
                 }
                 LogUtils.log( "Before creating first ProcessBuilder [" + Arrays.toString( this.args ) + "]" );
-                this.processBuilder = new ProcessBuilder(this.args)
-                        .redirectErrorStream(true);
+                this.processBuilder = new ProcessBuilder(this.args).redirectErrorStream(true);
             }
             else{
                 if (!this.args[0].endsWith(getScriptSuffix())){
@@ -176,8 +175,19 @@ public class ScriptUtils {
                 this.processBuilder = new ProcessBuilder(this.args)
                         .redirectErrorStream(true);
             }
+            setExecutableIfNeeded();
             this.thread = new Thread(this);
             this.thread.start();
+        }
+
+        /*added on 9.09.2015 by Evgeny for setting permission in order to run gs-webui.sh on docker*/
+        private void setExecutableIfNeeded(){
+            LogUtils.log( "setExecutableIfNeeded" );
+            File executableFile = new File( this.args[ 0 ] );
+            if( executableFile.exists() && executableFile.getName().endsWith( ".sh" ) ){
+                LogUtils.log( "setExecutableIfNeeded, within if, setExecutable(true) to [" + executableFile.getPath() + "]" );
+                executableFile.setExecutable(true);
+            }
         }
 
         public void run() {
