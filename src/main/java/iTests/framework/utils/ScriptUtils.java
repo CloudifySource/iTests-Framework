@@ -164,6 +164,7 @@ public class ScriptUtils {
                 else {
                     this.args[0] = binPath + "/" + this.args[0] + getScriptSuffix();
                 }
+                LogUtils.log( "Before creating first ProcessBuilder [" + Arrays.toString( this.args ) + "]" );
                 this.processBuilder = new ProcessBuilder(this.args)
                         .redirectErrorStream(true);
             }
@@ -171,7 +172,7 @@ public class ScriptUtils {
                 if (!this.args[0].endsWith(getScriptSuffix())){
                     this.args[0] += getScriptSuffix();
                 }
-                LogUtils.log( "this.args [" + Arrays.toString(this.args) + "]" );
+                LogUtils.log( "Before creating second ProcessBuilder [" + Arrays.toString( this.args ) + "]" );
                 this.processBuilder = new ProcessBuilder(this.args)
                         .redirectErrorStream(true);
             }
