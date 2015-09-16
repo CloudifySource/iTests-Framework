@@ -9,7 +9,7 @@
     <properties>
         <build.home>${env.BUILD_HOME}</build.home>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gsVersion>10.2.0-SNAPSHOT</gsVersion>
+        <gsVersion>11.0.0-SNAPSHOT</gsVersion>
         <cloudifyVersion>2.7.1-SNAPSHOT</cloudifyVersion>
         <springVersion>4.1.1.RELEASE</springVersion>
         <hibernateVersion>4.1.9.Final</hibernateVersion>
@@ -143,7 +143,7 @@
         <dependency>
             <groupId>com.gigaspaces.quality</groupId>
             <artifactId>webuitf</artifactId>
-            <version>1.0.11-SNAPSHOT</version>
+            <version>1.0.12-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.gigaspaces.quality</groupId>
