@@ -7,7 +7,7 @@
     <description>Service Grid Test framework for XAP and cloudify</description>
 
     <properties>
-        <build.home>C:\dev\builds\gigaspaces-xap-premium-11.0.0-m2-b14701-90</build.home>
+        <build.home>${env.BUILD_HOME}</build.home>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gsVersion>10.2.0-SNAPSHOT</gsVersion>
         <cloudifyVersion>2.7.1-SNAPSHOT</cloudifyVersion>
