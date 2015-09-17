@@ -11,6 +11,7 @@ import iTests.framework.utils.ScriptUtils.RunScript;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -95,7 +96,7 @@ public class WebuiTestUtils{
 	}	
 
 	public WebuiTestUtils( String url ) throws Exception {
-		this( url, true );
+		this(url, true);
 	}	
 	
 	public WebuiTestUtils(String url,boolean startWebBrowser) throws Exception {
@@ -224,8 +225,7 @@ public class WebuiTestUtils{
 	 * @throws Exception 
 	 */
 	public void startWebServices( boolean startWebBrowser ) throws Exception { 
-		startWebServices( null, startWebBrowser );
-
+		startWebServices(null, startWebBrowser);
 	}
 
 	/**
@@ -309,11 +309,11 @@ public class WebuiTestUtils{
 		for (int i = 0 ; i < 3 ; i++) {
 			try {
 				if (browser == null) {
-					driver = new FirefoxDriver();
+					driver = createFirefoxDriver();
 				}
 				else {
 					if (browser.equals("Firefox")) {
-						driver = new FirefoxDriver();
+						driver = createFirefoxDriver();
 					}
 					else {
 						if (browser.equals("IE")) {
@@ -347,6 +347,30 @@ public class WebuiTestUtils{
 			LogUtils.log("unable to lauch browser, test will fail on NPE");
 		}
 		return driver;
+	}
+
+	public static FirefoxDriver createFirefoxDriver(){
+
+		String newmanSystemProperty = System.getProperty("com.gs.test.use.newman");
+		LogUtils.log("WebuiTestsUtils, passed newmanSystemProperty=" + newmanSystemProperty);
+
+		boolean useNewman =
+				Boolean.parseBoolean( System.getProperty( "com.gs.test.use.newman", Boolean.FALSE.toString() ) );
+		LogUtils.log("useNewman=" + useNewman);
+		if( useNewman ) {
+			LogUtils.log("--- createFirefoxDriver ---");
+			String Xport = System.getProperty("lmportal.xvfb.id", ":1");
+			LogUtils.log("Xport=" + Xport);
+			//final File firefoxPath = new File( System.getProperty( "lmportal.deploy.firefox.path", "/usr/bin/firefox" ) );
+			FirefoxBinary firefoxBinary = new FirefoxBinary(/*firefoxPath*/);
+			LogUtils.log("FirefoxBinary initialized");
+			firefoxBinary.setEnvironmentProperty("DISPLAY", Xport);
+			LogUtils.log("After set DISPLAY port");
+
+			return new FirefoxDriver(firefoxBinary, null);
+		}
+
+		return new FirefoxDriver();
 	}
 
 	private void startWebBrowser(String uRL) throws InterruptedException {
