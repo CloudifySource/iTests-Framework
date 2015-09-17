@@ -17,7 +17,7 @@
     </properties>
 
     <groupId>iTests.framework</groupId>
-    <version>1.0.77-SNAPSHOT</version>
+    <version>1.0.78-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
@@ -157,6 +157,10 @@
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpmime</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-java</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
