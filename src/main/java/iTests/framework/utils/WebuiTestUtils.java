@@ -292,10 +292,19 @@ public class WebuiTestUtils{
 
 	
 	public void startWebServer() throws Exception {
-		LogUtils.log( 
-			"Starting webui server on port [" + ( ( port > 0 ) ? port : DEFAULT_PORT ) + "]..." );
-		scriptWebUI = ScriptUtils.runScriptRelativeToGigaspacesBinDir( 
-					scriptName + ( ( port > 0 ) ? " -port " + String.valueOf( port ) : "" ) );
+
+		final String sysProperty = "com.gs.webui.work";
+		String webuiWorkDir = System.getProperty( sysProperty );
+		LogUtils.log("Web work system property [" + sysProperty + "] =" + webuiWorkDir);
+		String workDirArgs = "";
+		if( webuiWorkDir != null && webuiWorkDir.trim().length() > 0 ){
+			workDirArgs = " -work " + webuiWorkDir;
+		}
+
+		String portArgs = ( ( port > 0 ) ? " -port " + String.valueOf( port ) : "" );
+		String args = scriptName + portArgs + workDirArgs;
+		LogUtils.log( "Starting webui server with following args [" + args + "]" );
+		scriptWebUI = ScriptUtils.runScriptRelativeToGigaspacesBinDir( args );
 	}
 
 	public void stopWebServer() throws IOException, InterruptedException {
