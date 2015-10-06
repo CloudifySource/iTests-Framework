@@ -211,6 +211,12 @@ public class AdminUtils {
         GridServiceAgent gsa = waitForAgent(machine);
         return loadGSC(gsa);
     }
+
+    /** loads 1 GSC on this machine */
+    public static GridServiceContainer loadGSCWithCustomSize(Machine machine, int memoryInMbs) {
+        GridServiceAgent gsa = waitForAgent(machine);
+        return loadGSCWithCustomSize(gsa,memoryInMbs);
+    }
 	
 	/** loads 1 GSC via this GSA */
 	public static GridServiceContainer loadGSC(GridServiceAgent gsa) {
