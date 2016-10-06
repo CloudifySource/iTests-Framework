@@ -23,7 +23,7 @@
     <repositories>
         <repository>
             <id>openspaces</id>
-            <url>http://maven-repository.openspaces.gigaspaces.org</url>
+            <url>http://maven-repository.openspaces.org</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -35,7 +35,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>org.openspaces</id>
-            <url>http://maven-repository.openspaces.gigaspaces.org</url>
+            <url>http://maven-repository.openspaces.org</url>
         </pluginRepository>
     </pluginRepositories>
 
